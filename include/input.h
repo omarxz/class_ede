@@ -220,6 +220,7 @@ struct fzerofun_workspace {
   double * target_value;
   int target_size;
   enum computation_stage required_computation_stage;
+  short do_shooting;    /** should we shoot using Omega_scf? will only turn off shooting for that one parameter */
 };
 
 /**************************************************************/
