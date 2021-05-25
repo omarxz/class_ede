@@ -516,6 +516,7 @@ int input_shooting(struct file_content * pfc,
   int flag1;
   double param1;
   double * unknown_parameter;
+  char string1[_ARGUMENT_LENGTH_MAX_];
   int unknown_parameters_size;
   int counter, index_target, i;
   int fevals=0;
@@ -558,6 +559,17 @@ int input_shooting(struct file_content * pfc,
 
   *has_shooting=_FALSE_;
 
+  /** Check if we want class to shoot, can be turned off with flag do_shooting = no  */ // TK added
+  class_call(parser_read_string(pfc,"do_shooting",&string1,&flag1,errmsg),
+            errmsg,
+            errmsg);
+  if ((flag1 == _TRUE_) && ((strstr(string1,"n") != NULL) || (strstr(string1,"N") != NULL))) {
+    fzw.do_shooting = _FALSE_;
+  }
+  else {
+    fzw.do_shooting = _TRUE_;
+  }
+
   /** Do we need to fix unknown parameters? */
   unknown_parameters_size = 0;
   fzw.required_computation_stage = 0;
@@ -565,7 +577,7 @@ int input_shooting(struct file_content * pfc,
     class_call(parser_read_double(pfc,target_namestrings[index_target],&param1,&flag1,errmsg),
                errmsg,
                errmsg);
-    if (flag1 == _TRUE_){
+    if ( (flag1 == _TRUE_) && ((fzw.do_shooting == _TRUE_) || (target_namestrings[index_target] != "Omega_scf")) ){
       /* input_needs_shoting_for_target takes care of the case where, for
          instance, Omega_dcdmdr is set to 0.0, and we don't need shooting */
       class_call(input_needs_shooting_for_target(pfc,
