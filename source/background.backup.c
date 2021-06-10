@@ -1996,7 +1996,7 @@ int background_solve(
         printf("     -> Omega_Lambda = %g, wished %g\n",
                pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_lambda]/pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_crit], pba->Omega0_lambda);
       }
-      printf("     -> parameters: [alpha, beta, V_alpha, V_beta] = \n");
+      printf("     -> parameters: [alpha, V_alpha, beta, V_beta] = \n");
       printf("                    [");
       for (index_scf=0; index_scf<pba->scf_parameters_size-1; index_scf++) {
         printf("%.3f, ",pba->scf_parameters[index_scf]);
@@ -2804,71 +2804,154 @@ int background_output_budget(
  and \f$ \rho^{class} \f$ has the proper dimension \f$ Mpc^-2 \f$.
 */
 
-double V_scf(struct background *pba,
-               double phi
-               ) {
-                 double scf_alpha    = pba->scf_parameters[0];
-                 double scf_beta     = pba->scf_parameters[1];
-                 double scf_V_1      = pba->scf_parameters[2];
-                 double scf_V_2      = pba->scf_parameters[3];
-                 double V_phi;
-  switch(pba->scf_potential){
-    case EXPETA:
-      /** Double exponential potential
-
-        The double exepotential is given by
-
-        * - \f$ V(\phi) = scf_V_1*\exp(-\alpha\phi)+ scf_V_2*\exp(-\beta\phi)\f$ */
-      V_phi = scf_V_1*pow(scf_V_2+exp(-scf_alpha*phi),-scf_beta);
-    break;
-    case EXPEXP:
-      /** Exponential plus constant
-
-      The potential is given by
-
-      * - \f$ V(\phi) = scf_V_1(scf_V_2+\exp(-\alpha\phi))^(-\beta)  */
-      V_phi = scf_V_1*exp(-scf_alpha*phi)+scf_V_2*exp(-scf_beta*phi);
-    break;
-    }
-    return V_phi;
-}
 
 
-double dV_scf(struct background *pba,
-                double phi
-                ) {
-                  double scf_alpha    = pba->scf_parameters[0];
-                  double scf_beta     = pba->scf_parameters[1];
-                  double scf_V_1      = pba->scf_parameters[2];
-                  double scf_V_2      = pba->scf_parameters[3];
-                  double dV_phi;
-  switch(pba->scf_potential){
-  case EXPETA:
-    dV_phi = scf_V_1*scf_alpha*scf_beta*exp(-scf_alpha*phi)*pow(scf_V_2+exp(-scf_alpha*phi),-scf_beta-1);
-  break;
-  case EXPEXP:
-    dV_phi = -scf_alpha*scf_V_1*exp(-scf_alpha*phi)-scf_beta*scf_V_2*exp(-scf_beta*phi);
-  break;
-  }
-  return dV_phi;
-}
+/*define a new variable as backgound_fluid*/
+switch (pba->V_scf) {
+case EXPEXP:
+/** Double exponential potential
 
+  The double exepotential is given by
 
-double ddV_scf(struct background *pba,
+  * - \f$ V(\phi) = V_{e1}+V_{e2} \f$
+  * - \f$ V_{e1} = scf_V_alpha*\exp(-\alpha\phi) \f$
+  * - \f$ V_{e2} = scf_V_beta*\exp(-\beta\phi) \f$
+
+  The first exponential
+  * - \f$ V_{e1} = scf_V_alpha*\exp(-\alpha\phi) \f$
+       with \f$ alpha=Sqrt[40] \f$ where the EDE attractor lives*/
+
+  double V_e1_scf(struct background *pba,
                  double phi
-               ) {
-                 double scf_alpha    = pba->scf_parameters[0];
-                 double scf_beta     = pba->scf_parameters[1];
-                 double scf_V_1      = pba->scf_parameters[2];
-                 double scf_V_2      = pba->scf_parameters[3];
-                 double ddV_phi;
-  switch(pba->scf_potential){
-  case EXPETA:
-    ddV_phi = -scf_V_1*pow(scf_alpha,2)*(-1-scf_beta)*scf_beta*exp(-2*scf_alpha*phi)*pow(scf_V_2+exp(-scf_alpha*phi),-scf_beta-2)-pow(scf_alpha,2)*scf_V_1*scf_beta*exp(-scf_alpha*phi)*pow(scf_V_2+exp(-scf_alpha*phi),-scf_beta-1);
-  break;
-  case EXPEXP:
-    ddV_phi = pow(-scf_alpha,2)*scf_V_1*exp(-scf_alpha*phi)+pow(-scf_beta,2)*scf_V_2*exp(-scf_beta*phi);
-  break;
+                 ) {
+    double scf_alpha    = pba->scf_parameters[0];
+    double scf_V_alpha  = pba->scf_parameters[1];
+    double scf_beta     = pba->scf_parameters[2];
+    double scf_V_beta   = pba->scf_parameters[3];
+
+    return  scf_V_alpha*exp(-scf_alpha*phi);
   }
-  return ddV_phi;
+
+  double dV_e1_scf(struct background *pba,
+                  double phi
+                  ) {
+    double scf_alpha    = pba->scf_parameters[0];
+    double scf_V_alpha  = pba->scf_parameters[1];
+    double scf_beta     = pba->scf_parameters[2];
+    double scf_V_beta   = pba->scf_parameters[3];
+
+    return -scf_alpha*V_e1_scf(pba,phi);
+  }
+
+  double ddV_e1_scf(struct background *pba,
+                   double phi
+                   ) {
+    double scf_alpha    = pba->scf_parameters[0];
+    double scf_V_alpha  = pba->scf_parameters[1];
+    double scf_beta     = pba->scf_parameters[2];
+    double scf_V_beta   = pba->scf_parameters[3];
+
+    return pow(-scf_alpha,2)*V_e1_scf(pba,phi);
+  }
+
+    /**The second exponential
+    * - \f$ V_{e2} = scf_V_beta*\exp(-\beta\phi) \f$
+         with \f$ beta=0.01 \f$ (free parameter) where the late DE attractor lives*/
+
+    double V_e2_scf(struct background *pba,
+                   double phi
+                   ) {
+    double scf_alpha    = pba->scf_parameters[0];
+    double scf_V_alpha  = pba->scf_parameters[1];
+    double scf_beta     = pba->scf_parameters[2];
+    double scf_V_beta   = pba->scf_parameters[3];
+
+      return  scf_V_beta*exp(-scf_beta*phi);
+    }
+
+    double dV_e2_scf(struct background *pba,
+                    double phi
+                    ) {
+    double scf_alpha    = pba->scf_parameters[0];
+    double scf_V_alpha  = pba->scf_parameters[1];
+    double scf_beta     = pba->scf_parameters[2];
+    double scf_V_beta   = pba->scf_parameters[3];
+
+      return -scf_beta*V_e2_scf(pba,phi);
+    }
+
+    double ddV_e2_scf(struct background *pba,
+                     double phi
+                     ) {
+    double scf_alpha    = pba->scf_parameters[0];
+    double scf_V_alpha  = pba->scf_parameters[1];
+    double scf_beta     = pba->scf_parameters[2];
+    double scf_V_beta   = pba->scf_parameters[3];
+
+      return pow(-scf_beta,2)*V_e2_scf(pba,phi);
+    }
+
+
+    /** Fianlly we can obtain the overall potential \f$ V = V_{e1}+V_{e2} \f$ */
+
+    double V_scf(
+                 struct background *pba,
+                 double phi) {
+      return  V_e1_scf(pba,phi)+V_e2_scf(pba,phi);
+    }
+
+    double dV_scf(
+                  struct background *pba,
+                  double phi) {
+      return dV_e1_scf(pba,phi)+dV_e2_scf(pba,phi);
+    }
+
+    double ddV_scf(
+                   struct background *pba,
+                   double phi) {
+      return ddV_e1_scf(pba,phi)+ddV_e2_scf(pba,phi);
+    }
+
+
+  break;
+case EXPETA:
+    /** Exponential plus constant
+
+    The potentialis given by
+
+    * - \f$ V(\phi) = V_0(\eta+\exp(-\alpha\phi))^(-\beta)  */
+
+    double V_scf(struct background *pba,
+                   double phi
+                   ) {
+      double scf_V_0      = pba->scf_parameters[0];
+      double scf_eta      = pba->scf_parameters[1];
+      double scf_alpha    = pba->scf_parameters[2];
+      double scf_beta     = pba->scf_parameters[3];
+
+      return  scf_V_0*pow(scf_eta+exp(-scf_alpha*phi),-scf_beta);
+    }
+
+    double dV_scf(struct background *pba,
+                    double phi
+                    ) {
+      double scf_V_0      = pba->scf_parameters[0];
+      double scf_eta      = pba->scf_parameters[1];
+      double scf_alpha    = pba->scf_parameters[2];
+      double scf_beta     = pba->scf_parameters[3];
+
+      return scf_V_0*scf_alpha*scf_beta*exp(-scf_alpha*phi)*pow(scf_eta+exp(-scf_alpha*phi),-scf_beta-1);
+    }
+
+    double ddV_scf(struct background *pba,
+                     double phi
+                     ) {
+      double scf_V_0      = pba->scf_parameters[0];
+      double scf_eta      = pba->scf_parameters[1];
+      double scf_alpha    = pba->scf_parameters[2];
+      double scf_beta     = pba->scf_parameters[3];
+
+      return -scf_V_0*pow(scf_alpha,2)*(-1-scf_beta)*scf_beta*exp(-2*scf_alpha*phi)*pow(scf_eta+exp(-scf_alpha*phi),-scf_beta-2)-scf_alpha*dV_scf(pba,phi);
+   }
+     break;
 }
