@@ -472,7 +472,7 @@ int background_functions(
     pvecback[pba->index_bg_ddV_scf] = ddV_scf(pba,phi); // ddV_scf(pba,phi); //potential'' as function of phi
     pvecback[pba->index_bg_rho_scf] = (phi_prime*phi_prime/(2*a*a) + V_scf(pba,phi))/3.; // energy of the scalar field. The field units are set automatically by setting the initial conditions
     pvecback[pba->index_bg_p_scf] =(phi_prime*phi_prime/(2*a*a) - V_scf(pba,phi))/3.; // pressure of the scalar field
-    pvecback[pba->index_bg_w_scf] = pvecback[pba->index_bg_p_scf] / pvecback[pba->index_bg_rho_scf]; // EoS of the scalar field
+    pvecback[pba->index_bg_w_scf] = pvecback[pba->index_bg_p_scf] / pvecback[pba->index_bg_rho_scf]; // EoS of the scalar field //OR added
     rho_tot += pvecback[pba->index_bg_rho_scf];
     p_tot += pvecback[pba->index_bg_p_scf];
     dp_dloga += 0.0; /** <-- This depends on a_prime_over_a, so we cannot add it now! */
@@ -613,7 +613,7 @@ int background_functions(
     pvecback[pba->index_bg_Omega_m] = rho_m / rho_crit;
 
     /** - compute Omega_scf */
-    pvecback[pba->index_bg_Omega_scf] =  pvecback[pba->index_bg_rho_scf] / rho_crit;
+    pvecback[pba->index_bg_Omega_scf] =  pvecback[pba->index_bg_rho_scf] / rho_crit; //OR added
 
     /** - cosmological time */
     pvecback[pba->index_bg_time] = pvecback_B[pba->index_bi_time];
@@ -1990,13 +1990,19 @@ int background_solve(
     }
     if (pba->has_scf == _TRUE_) {
       printf("    Scalar field details:\n");
+      if (pba->scf_potential == EXPEXP){  //OR added
+      printf("     -> V(phi) = scf_V_1*exp(-scf_alpha*phi)+scf_V_2*exp(-scf_beta*phi)\n");
+      }
+      else if (pba->scf_potential == EXPETA){ //OR added
+      printf("     -> V(phi) = scf_V_1*(scf_V_2+exp(-scf_alpha*phi))^(-scf_beta)\n");
+      }
       printf("     -> Omega_scf = %g, wished %g\n",
              pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_scf]/pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_crit], pba->Omega0_scf);
       if (pba->has_lambda == _TRUE_) {
         printf("     -> Omega_Lambda = %g, wished %g\n",
                pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_lambda]/pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_crit], pba->Omega0_lambda);
       }
-      printf("     -> parameters: [alpha, beta, V_alpha, V_beta] = \n");
+      printf("     -> parameters: [scf_alpha, scf_beta, scf_V_1, scf_V_2] = \n"); //OR edited
       printf("                    [");
       for (index_scf=0; index_scf<pba->scf_parameters_size-1; index_scf++) {
         printf("%.3f, ",pba->scf_parameters[index_scf]);
@@ -2358,8 +2364,8 @@ int background_output_titles(
   class_store_columntitle(titles,"(.)rho_crit",_TRUE_);
   class_store_columntitle(titles,"(.)rho_dcdm",pba->has_dcdm);
   class_store_columntitle(titles,"(.)rho_dr",pba->has_dr);
-  class_store_columntitle(titles,"(.)Omega_m",_TRUE_);
-  class_store_columntitle(titles,"(.)Omega_r",_TRUE_);
+  class_store_columntitle(titles,"(.)Omega_m",_TRUE_); //OR added
+  class_store_columntitle(titles,"(.)Omega_r",_TRUE_); //OR added
 
   class_store_columntitle(titles,"(.)rho_scf",pba->has_scf);
   class_store_columntitle(titles,"(.)p_scf",pba->has_scf);
@@ -2369,8 +2375,8 @@ int background_output_titles(
   class_store_columntitle(titles,"V_scf",pba->has_scf);
   class_store_columntitle(titles,"V'_scf",pba->has_scf);
   class_store_columntitle(titles,"V''_scf",pba->has_scf);
-  class_store_columntitle(titles,"w_scf",pba->has_scf);
-  class_store_columntitle(titles,"Omega_scf",pba->has_scf);
+  class_store_columntitle(titles,"w_scf",pba->has_scf); //OR added
+  class_store_columntitle(titles,"Omega_scf",pba->has_scf); //OR added
 
   class_store_columntitle(titles,"(.)rho_tot",_TRUE_);
   class_store_columntitle(titles,"(.)p_tot",_TRUE_);
@@ -2432,8 +2438,8 @@ int background_output_data(
     class_store_double(dataptr,pvecback[pba->index_bg_rho_crit],_TRUE_,storeidx);
     class_store_double(dataptr,pvecback[pba->index_bg_rho_dcdm],pba->has_dcdm,storeidx);
     class_store_double(dataptr,pvecback[pba->index_bg_rho_dr],pba->has_dr,storeidx);
-    class_store_double(dataptr,pvecback[pba->index_bg_Omega_m],_TRUE_,storeidx);
-    class_store_double(dataptr,pvecback[pba->index_bg_Omega_r],_TRUE_,storeidx);
+    class_store_double(dataptr,pvecback[pba->index_bg_Omega_m],_TRUE_,storeidx); //OR added
+    class_store_double(dataptr,pvecback[pba->index_bg_Omega_r],_TRUE_,storeidx); //OR added
 
     class_store_double(dataptr,pvecback[pba->index_bg_rho_scf],pba->has_scf,storeidx);
     class_store_double(dataptr,pvecback[pba->index_bg_p_scf],pba->has_scf,storeidx);
@@ -2443,8 +2449,8 @@ int background_output_data(
     class_store_double(dataptr,pvecback[pba->index_bg_V_scf],pba->has_scf,storeidx);
     class_store_double(dataptr,pvecback[pba->index_bg_dV_scf],pba->has_scf,storeidx);
     class_store_double(dataptr,pvecback[pba->index_bg_ddV_scf],pba->has_scf,storeidx);
-    class_store_double(dataptr,pvecback[pba->index_bg_w_scf],pba->has_scf,storeidx);
-    class_store_double(dataptr,pvecback[pba->index_bg_Omega_scf],pba->has_scf,storeidx);
+    class_store_double(dataptr,pvecback[pba->index_bg_w_scf],pba->has_scf,storeidx); //OR added
+    class_store_double(dataptr,pvecback[pba->index_bg_Omega_scf],pba->has_scf,storeidx); //OR added
 
     class_store_double(dataptr,pvecback[pba->index_bg_rho_tot],_TRUE_,storeidx);
     class_store_double(dataptr,pvecback[pba->index_bg_p_tot],_TRUE_,storeidx);
@@ -2779,11 +2785,6 @@ int background_output_budget(
 }
 
 /**
- * Scalar field potential and its derivatives with respect to the field _scf
- * For Albrecht & Skordis model: 9908085
- * - \f$ V = V_{p_{scf}}*V_{e_{scf}} \f$
- * - \f$ V_e =  \exp(-\lambda \phi) \f$ (exponential)
- * - \f$ V_p = (\phi - B)^\alpha + A \f$ (polynomial bump)
  *
  * TODO:
  * - Add some functionality to include different models/potentials (tuning would be difficult, though)
@@ -2802,6 +2803,11 @@ int background_output_budget(
  * With this convention, we have
  * \f$ \rho^{class} = (8 \pi G)/3 \rho^{physical} = 1/(3 m_{pl}^2) \rho^{physical} = 1/3 * [ 1/(2a^2) (\phi')^2 + V(\phi) ] \f$
  and \f$ \rho^{class} \f$ has the proper dimension \f$ Mpc^-2 \f$.
+*/
+
+/**
+ * Added a switch statment to choose between different scalar field potentials
+ * with their corresponding first and second derivative //OR added
 */
 
 double V_scf(struct background *pba,
@@ -2833,7 +2839,7 @@ double V_scf(struct background *pba,
     return V_phi;
 }
 
-
+/* finding the corresping dV */
 double dV_scf(struct background *pba,
                 double phi
                 ) {
@@ -2853,7 +2859,7 @@ double dV_scf(struct background *pba,
   return dV_phi;
 }
 
-
+/* finding the corresping ddV */
 double ddV_scf(struct background *pba,
                  double phi
                ) {

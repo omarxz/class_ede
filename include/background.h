@@ -18,11 +18,11 @@ enum spatial_curvature {flat,open,closed};
 
 enum equation_of_state {CLP,EDE};
 
-/** list of formats for the vector of background quantities */
+/** list of possible scalar field potentials */ //OR added
 
 enum quintessence_potential {EXPETA,EXPEXP};
 
-/** list of possible scalar field potentials */
+/** list of formats for the vector of background quantities */
 
 enum vecback_format {short_info, normal_info, long_info};
 
@@ -120,7 +120,7 @@ struct background
   double phi_ini_scf;      /**< \f$ \phi(t_0) \f$: scalar field initial value */
   double phi_prime_ini_scf;/**< \f$ d\phi(t_0)/d\tau \f$: scalar field initial derivative wrt conformal time */
   int scf_parameters_size; /**< size of scf_parameters */
-  enum quintessence_potential scf_potential;  /**< choosing between quintessence potentials */
+  enum quintessence_potential scf_potential;  /**< choosing between quintessence potentials */ //OR added
 
   //@}
 
@@ -179,8 +179,8 @@ struct background
   int index_bg_rho_scf;       /**< scalar field energy density */
   int index_bg_p_scf;         /**< scalar field pressure */
   int index_bg_p_prime_scf;   /**< scalar field pressure */
-  int index_bg_w_scf;         /**< equation of state for scalar field */
-  int index_bg_Omega_scf;     /**< scalar field density parameter */
+  int index_bg_w_scf;         /**< equation of state for scalar field */ //OR added
+  int index_bg_Omega_scf;     /**< scalar field density parameter */ //OR added
 
   int index_bg_rho_ncdm1;     /**< density of first ncdm species (others contiguous) */
   int index_bg_p_ncdm1;       /**< pressure of first ncdm species (others contiguous) */
