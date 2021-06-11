@@ -2905,6 +2905,23 @@ int input_read_parameters_species(struct file_content * pfc,
   /** 8.b) If Omega scalar field (SCF) is different from 0 */
   if (pba->Omega0_scf != 0.){
 
+    /** 8.b.1) choice of scalar field potential*/
+    class_call(parser_read_string(pfc,"scf_potential",&string1,&flag1,errmsg),
+               errmsg,
+               errmsg);
+    /* Complete set of parameters */
+    if (flag1 == _TRUE_) {
+      if ((strstr(string1,"EXPETA") != NULL) || (strstr(string1,"expeta") != NULL)) {
+        pba->scf_potential = EXPETA;
+      }
+      else if ((strstr(string1,"EXPEXP") != NULL) || (strstr(string1,"expexp") != NULL)) {
+        pba->scf_potential = EXPEXP;
+      }
+      else {
+        class_stop(errmsg,"incomprehensible input '%s' for the field 'scf_potential'",string1);
+      }
+    }
+
     /** 8.b.1) Additional SCF parameters */
     /* Read */
     class_call(parser_read_list_of_doubles(pfc,
