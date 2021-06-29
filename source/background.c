@@ -1806,6 +1806,10 @@ int background_solve(
   double comoving_radius=0.;
   /* conformal distance in Mpc (equal to comoving radius in flat case) */
   double conformal_distance;
+  /**< scalar field EDE peak redshift */ //OR added
+  double z_peak_new;
+  /**< scalar field EDE peak injection */ //OR added
+  double f_peak_new;
 
   /* evolvers */
   extern int evolver_rk();
@@ -1926,6 +1930,22 @@ int background_solve(
 
     pba->background_table[index_loga*pba->bg_size+pba->index_bg_ang_distance] = comoving_radius/(1.+pba->z_table[index_loga]);
     pba->background_table[index_loga*pba->bg_size+pba->index_bg_lum_distance] = comoving_radius*(1.+pba->z_table[index_loga]);
+
+    /** f_EDE injection calculation */
+    /* -> compute the peak fractional energy density of scalar field and its location in redshift */ //OR 
+    if (pba->has_scf==_TRUE_){
+      z_peak_new = pba->z_table[index_loga];
+      if( (z_peak_new > 100) && (z_peak_new < 20000) ){
+          f_peak_new = pba->background_table[index_loga*pba->bg_size+pba->index_bg_rho_scf]/pba->background_table[index_loga*pba->bg_size+pba->index_bg_rho_tot];
+      // assign potentially new peak redshift
+        if (f_peak_new > pba->f_scf_max){
+          // calculate fraction of EDE at this redshift
+            // if it’s larger than previously calculated f_ede then reset the z_scf_max and f_scf_max
+            pba->z_scf_max = z_peak_new;
+            pba->f_scf_max = f_peak_new;
+        }
+      }
+    }
   }
 
   /** - fill tables of second derivatives (in view of spline interpolation) */
@@ -1990,6 +2010,7 @@ int background_solve(
     }
     if (pba->has_scf == _TRUE_) {
       printf("    Scalar field details:\n");
+      printf("     -> f_EDE = %f at z = %f\n", pba->f_scf_max, pba->z_scf_max); //OR added
       if (pba->scf_potential == EXPEXP){  //OR added
       printf("     -> V(phi) = scf_V_1*exp(-scf_alpha*phi)+scf_V_2*exp(-scf_beta*phi)\n");
       }
@@ -2002,13 +2023,35 @@ int background_solve(
         printf("     -> Omega_Lambda = %g, wished %g\n",
                pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_lambda]/pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_crit], pba->Omega0_lambda);
       }
-      printf("     -> parameters: [scf_alpha, scf_beta, scf_V_1, scf_V_2] = \n"); //OR edited
+      printf("     -> parameters: [scf_alpha, scf_beta, scf_V_1, scf_V_2, phi_i, phidot_i] = \n"); //OR edited
       printf("                    [");
       for (index_scf=0; index_scf<pba->scf_parameters_size-1; index_scf++) {
-        printf("%.3f, ",pba->scf_parameters[index_scf]);
+        printf("%g, ",pba->scf_parameters[index_scf]);
       }
-      printf("%.3f]\n",pba->scf_parameters[pba->scf_parameters_size-1]);
+      printf("%g]\n",pba->scf_parameters[pba->scf_parameters_size-1]);
     }
+  }
+  if (pba->has_scf == _TRUE_) {
+    printf("    Scalar field details:\n");
+    printf("     -> f_EDE = %f at z = %f\n", pba->f_scf_max, pba->z_scf_max); //OR added
+    if (pba->scf_potential == EXPEXP){  //OR added
+    printf("     -> V(phi) = scf_V_1*exp(-scf_alpha*phi)+scf_V_2*exp(-scf_beta*phi)\n");
+    }
+    else if (pba->scf_potential == EXPETA){ //OR added
+    printf("     -> V(phi) = scf_V_1*(scf_V_2+exp(-scf_alpha*phi))^(-scf_beta)\n");
+    }
+    printf("     -> Omega_scf = %g, wished %g\n",
+           pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_scf]/pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_crit], pba->Omega0_scf);
+    if (pba->has_lambda == _TRUE_) {
+      printf("     -> Omega_Lambda = %g, wished %g\n",
+             pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_lambda]/pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_crit], pba->Omega0_lambda);
+    }
+    printf("     -> parameters: [scf_alpha, scf_beta, scf_V_1, scf_V_2, phi_i, phidot_i] = \n"); //OR edited
+    printf("                    [");
+    for (index_scf=0; index_scf<pba->scf_parameters_size-1; index_scf++) {
+      printf("%g, ",pba->scf_parameters[index_scf]);
+    }
+    printf("%g]\n",pba->scf_parameters[pba->scf_parameters_size-1]);
   }
 
   /**  - store information in the background structure */
@@ -2188,8 +2231,8 @@ int background_initial_conditions(
     else {
       printf("Not using attractor initial conditions\n");
       /** - --> If no attractor initial conditions are assigned, gets the provided ones. */
-      pvecback_integration[pba->index_bi_phi_scf] = pba->phi_ini_scf;
-      pvecback_integration[pba->index_bi_phi_prime_scf] = pba->phi_prime_ini_scf;
+      pvecback_integration[pba->index_bi_phi_scf] = pba->scf_parameters[pba->scf_parameters_size-2];
+      pvecback_integration[pba->index_bi_phi_prime_scf] = pba->scf_parameters[pba->scf_parameters_size-1];
     }
     class_test(!isfinite(pvecback_integration[pba->index_bi_phi_scf]) ||
                !isfinite(pvecback_integration[pba->index_bi_phi_scf]),

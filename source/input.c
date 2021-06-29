@@ -531,6 +531,7 @@ int input_shooting(struct file_content * pfc,
                                        "Omega_dcdmdr",
                                        "omega_dcdmdr",
                                        "Omega_scf",
+                                       "f_ede_scf", //OR
                                        "Omega_ini_dcdm",
                                        "omega_ini_dcdm",
                                        "sigma8"};
@@ -540,6 +541,7 @@ int input_shooting(struct file_content * pfc,
                                         "Omega_ini_dcdm",           /* unknown param for target 'Omega_dcdmd' */
                                         "Omega_ini_dcdm",           /* unknown param for target 'omega_dcdmdr"' */
                                         "scf_shooting_parameter",   /* unknown param for target 'Omega_scf' */
+                                        "scf_alpha_shooting",       /* unknown param for target 'f_ede' */
                                         "Omega_dcdmdr",             /* unknown param for target 'Omega_ini_dcdm' */
                                         "omega_dcdmdr",             /* unknown param for target 'omega_ini_dcdm' */
                                         "A_s"};                     /* unknown param for target 'sigma8' */
@@ -551,6 +553,7 @@ int input_shooting(struct file_content * pfc,
                                         cs_background,     /* computation stage for target 'Omega_dcdmdr' */
                                         cs_background,     /* computation stage for target 'omega_dcdmdr' */
                                         cs_background,     /* computation stage for target 'Omega_scf' */
+                                        cs_background,     /* computation stage for target 'f_ede' */
                                         cs_background,     /* computation stage for target 'Omega_ini_dcdm' */
                                         cs_background,     /* computation stage for target 'omega_ini_dcdm' */
                                         cs_nonlinear};       /* computation stage for target 'sigma8' */
@@ -1139,9 +1142,11 @@ int input_get_guess(double *xguess,
        * dxdy[index_guess] = -0.5081*pow(ba.Omega0_scf,-9./7.)`;
        * Version 3: use attractor solution
        * */
-      if (ba.scf_tuning_index == 0){
-        xguess[index_guess] = sqrt(3.0/ba.Omega0_scf);
-        dxdy[index_guess] = -0.5*sqrt(3.0)*pow(ba.Omega0_scf,-1.5);
+      if (ba.scf_tuning_index == 3){
+        //Tuning of V_beta //OR added
+        xguess[index_guess] = 3*pow(ba.H0,2)*ba.Omega0_scf*0.5;
+        dxdy[index_guess] = 3*pow(ba.H0,2)*0.5;
+        printf("Initial guess for scf_tuning_index = %d , V_beta = %g\n", ba.scf_tuning_index, xguess[index_guess]);
       }
       else{
         /* Default: take the passed value as xguess and set dxdy to 1. */
@@ -1149,6 +1154,14 @@ int input_get_guess(double *xguess,
         dxdy[index_guess] = 1.;
       }
       break;
+    case f_ede_scf:
+      /* *
+       * need to optimize shooting by finding an approximate equation for phi_i //OR
+       * */
+      xguess[index_guess] = ba.scf_parameters[0];
+      dxdy[index_guess] = -1000.;
+      printf("Initial guess for scf_alpha = %g\n", xguess[index_guess]);
+    break;
     case omega_ini_dcdm:
       Omega0_dcdmdr = 1./(ba.h*ba.h);
     case Omega_ini_dcdm:
@@ -1357,6 +1370,15 @@ int input_try_unknown_parameters(double * unknown_parameter,
     case Omega_scf:
       /** In case scalar field is used to fill, pba->Omega0_scf is not equal to pfzw->target_value[i].*/
       output[i] = ba.background_table[(ba.bt_size-1)*ba.bg_size+ba.index_bg_rho_scf]/(ba.H0*ba.H0)-ba.Omega0_scf;
+      if (input_verbose > 2) printf("Current Omega_scf = %e \t\t Omega_scf wanted = %e \t\t difference = %e \n",
+      ba.background_table[(ba.bt_size-1)*ba.bg_size+ba.index_bg_rho_scf]/(ba.H0*ba.H0),
+      ba.Omega0_scf,
+      output[i]);
+      break;
+    case f_ede_scf:
+    //OR added
+      output[i] = ba.f_ede_scf-ba.f_scf_max;
+      printf("Current f_ede = %e \t\t f_ede wanted = %e \t\t difference = %e \n",ba.f_scf_max,ba.f_ede_scf,output[i]);
       break;
     case Omega_ini_dcdm:
     case omega_ini_dcdm:
@@ -2968,6 +2990,13 @@ int input_read_parameters_species(struct file_content * pfc,
     /** 8.b.4) Shooting parameter */
     /* Read */
     class_read_double("scf_shooting_parameter",pba->scf_parameters[pba->scf_tuning_index]);
+    printf("the shooting parameter, V_beta is %g\n",pba->scf_parameters[pba->scf_tuning_index]);
+    class_read_double("f_ede_scf",pba->f_ede_scf);
+    if (pba->f_ede_scf !=0) {
+      //OR added
+      class_read_double("scf_alpha_shooting",pba->scf_parameters[0]);
+      printf("the shooting parameter, alpha is %g\n",pba->scf_parameters[0]);
+    }
     /* Complete set of parameters */
     scf_lambda = pba->scf_parameters[0];
     if ((fabs(scf_lambda) < 3.)&&(pba->background_verbose>1)){
