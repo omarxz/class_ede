@@ -801,6 +801,7 @@ int input_needs_shooting_for_target(struct file_content * pfc,
     case Omega_dcdmdr:
     case omega_dcdmdr:
     case Omega_scf:
+    case f_ede_scf:
     case Omega_ini_dcdm:
     case omega_ini_dcdm:
       /* Check that Omega's or omega's are nonzero: */
@@ -1151,7 +1152,7 @@ int input_get_guess(double *xguess,
       else{
         /* Default: take the passed value as xguess and set dxdy to 1. */
         xguess[index_guess] = ba.scf_parameters[ba.scf_tuning_index];
-        dxdy[index_guess] = 1.;
+        dxdy[index_guess] = 5.;
       }
       break;
     case f_ede_scf:
@@ -1159,7 +1160,7 @@ int input_get_guess(double *xguess,
        * need to optimize shooting by finding an approximate equation for phi_i //OR
        * */
       xguess[index_guess] = ba.scf_parameters[0];
-      dxdy[index_guess] = -1000.;
+      dxdy[index_guess] = 4.;
       printf("Initial guess for scf_alpha = %g\n", xguess[index_guess]);
     break;
     case omega_ini_dcdm:
@@ -1377,8 +1378,8 @@ int input_try_unknown_parameters(double * unknown_parameter,
       break;
     case f_ede_scf:
     //OR added
-      output[i] = ba.f_ede_scf-ba.f_scf_max;
-      printf("Current f_ede = %e \t\t f_ede wanted = %e \t\t difference = %e \n",ba.f_scf_max,ba.f_ede_scf,output[i]);
+      output[i] = ba.f_ede_wanted_scf-ba.f_scf_max;
+      printf("Current f_ede = %e at z = %f \t\t f_ede wanted = %e \t\t difference = %e \n",ba.f_scf_max,ba.z_scf_max,ba.f_ede_wanted_scf,output[i]);
       break;
     case Omega_ini_dcdm:
     case omega_ini_dcdm:
@@ -2990,10 +2991,29 @@ int input_read_parameters_species(struct file_content * pfc,
     /** 8.b.4) Shooting parameter */
     /* Read */
     class_read_double("scf_shooting_parameter",pba->scf_parameters[pba->scf_tuning_index]);
-    printf("the shooting parameter, V_beta is %g\n",pba->scf_parameters[pba->scf_tuning_index]);
-    class_read_double("f_ede_scf",pba->f_ede_scf);
-    if (pba->f_ede_scf !=0) {
-      //OR added
+    class_call(parser_read_string(pfc,
+                                  "do_shooting",
+                                  &string1,
+                                  &flag1,
+                                  errmsg),
+                errmsg,
+                errmsg);
+    if (flag1 == _TRUE_) {
+      if( string_begins_with(string1,'y') || string_begins_with(string1,'Y') ){
+        /** If we are shooting for Omega_scf, priint the corresping shooting parameter */ //OR
+        printf("the shooting parameter, V_beta is %g\n",pba->scf_parameters[pba->scf_tuning_index]);
+      }
+    }
+    class_call(parser_read_string(pfc,
+                                  "f_ede_scf",
+                                  &string1,
+                                  &flag1,
+                                  errmsg),
+                errmsg,
+                errmsg);
+    if (flag1 == _TRUE_) {
+      /** If we are shooting for f_ede, priint the corresping shooting parameter */ //OR
+      class_read_double("f_ede_scf",pba->f_ede_wanted_scf);
       class_read_double("scf_alpha_shooting",pba->scf_parameters[0]);
       printf("the shooting parameter, alpha is %g\n",pba->scf_parameters[0]);
     }

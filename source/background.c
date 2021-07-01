@@ -1932,7 +1932,6 @@ int background_solve(
     pba->background_table[index_loga*pba->bg_size+pba->index_bg_lum_distance] = comoving_radius*(1.+pba->z_table[index_loga]);
 
     /** f_EDE injection calculation */
-    /* -> compute the peak fractional energy density of scalar field and its location in redshift */ //OR 
     if (pba->has_scf==_TRUE_){
       z_peak_new = pba->z_table[index_loga];
       if( (z_peak_new > 100) && (z_peak_new < 20000) ){
@@ -2008,9 +2007,9 @@ int background_solve(
              pba->Omega0_dr+pba->Omega0_dcdm,pba->Omega0_dcdmdr);
       printf("     -> Omega_ini_dcdm/Omega_b = %f\n",pba->Omega_ini_dcdm/pba->Omega0_b);
     }
-    if (pba->has_scf == _TRUE_) {
+    if (pba->has_scf == _TRUE_){
       printf("    Scalar field details:\n");
-      printf("     -> f_EDE = %f at z = %f\n", pba->f_scf_max, pba->z_scf_max); //OR added
+      printf("     -> f_EDE = %f at z = %f\n", pba->f_scf_max, pba->z_scf_max);
       if (pba->scf_potential == EXPEXP){  //OR added
       printf("     -> V(phi) = scf_V_1*exp(-scf_alpha*phi)+scf_V_2*exp(-scf_beta*phi)\n");
       }
@@ -2030,28 +2029,6 @@ int background_solve(
       }
       printf("%g]\n",pba->scf_parameters[pba->scf_parameters_size-1]);
     }
-  }
-  if (pba->has_scf == _TRUE_) {
-    printf("    Scalar field details:\n");
-    printf("     -> f_EDE = %f at z = %f\n", pba->f_scf_max, pba->z_scf_max); //OR added
-    if (pba->scf_potential == EXPEXP){  //OR added
-    printf("     -> V(phi) = scf_V_1*exp(-scf_alpha*phi)+scf_V_2*exp(-scf_beta*phi)\n");
-    }
-    else if (pba->scf_potential == EXPETA){ //OR added
-    printf("     -> V(phi) = scf_V_1*(scf_V_2+exp(-scf_alpha*phi))^(-scf_beta)\n");
-    }
-    printf("     -> Omega_scf = %g, wished %g\n",
-           pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_scf]/pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_crit], pba->Omega0_scf);
-    if (pba->has_lambda == _TRUE_) {
-      printf("     -> Omega_Lambda = %g, wished %g\n",
-             pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_lambda]/pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_crit], pba->Omega0_lambda);
-    }
-    printf("     -> parameters: [scf_alpha, scf_beta, scf_V_1, scf_V_2, phi_i, phidot_i] = \n"); //OR edited
-    printf("                    [");
-    for (index_scf=0; index_scf<pba->scf_parameters_size-1; index_scf++) {
-      printf("%g, ",pba->scf_parameters[index_scf]);
-    }
-    printf("%g]\n",pba->scf_parameters[pba->scf_parameters_size-1]);
   }
 
   /**  - store information in the background structure */

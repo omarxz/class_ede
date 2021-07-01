@@ -120,6 +120,7 @@ struct background
   double phi_ini_scf;      /**< \f$ \phi(t_0) \f$: scalar field initial value */
   double phi_prime_ini_scf;/**< \f$ d\phi(t_0)/d\tau \f$: scalar field initial derivative wrt conformal time */
   double f_ede_scf;        /**< scalar field fraction of EDE */ //OR added
+  double f_ede_wanted_scf;        /**< scalar field fraction of EDE */ //OR added
   double scf_alpha_shooting;/**< scalar field EDE fraction shooting parameter*/ //OR added
   int scf_parameters_size; /**< size of scf_parameters */
   enum quintessence_potential scf_potential;  /**< choosing between quintessence potentials */ //OR added
