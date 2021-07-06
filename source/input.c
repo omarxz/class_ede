@@ -1157,10 +1157,10 @@ int input_get_guess(double *xguess,
       break;
     case f_ede_scf:
       /* *
-       * need to optimize shooting by finding an approximate equation for phi_i //OR
+       * need to optimize shooting by finding an approximate equation for alpha //OR //
        * */
-      xguess[index_guess] = ba.scf_parameters[0];
-      dxdy[index_guess] = 4.;
+      xguess[index_guess] = 4/sqrt(ba.f_ede_wanted_scf);
+      dxdy[index_guess] = 4.; //-pow(ba.f_ede_wanted_scf,-1.5)
       printf("Initial guess for scf_alpha = %g\n", xguess[index_guess]);
     break;
     case omega_ini_dcdm:
