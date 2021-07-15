@@ -1934,7 +1934,7 @@ int background_solve(
     /** f_EDE injection calculation */
     if (pba->has_scf==_TRUE_){
       z_peak_new = pba->z_table[index_loga];
-      if( (z_peak_new > 100) && (z_peak_new < 20000) ){
+      if( (z_peak_new > 100) && (z_peak_new < 10e14) ){
           f_peak_new = pba->background_table[index_loga*pba->bg_size+pba->index_bg_rho_scf]/pba->background_table[index_loga*pba->bg_size+pba->index_bg_rho_tot];
       // assign potentially new peak redshift
         if (f_peak_new > pba->f_scf_max){
