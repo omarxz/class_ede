@@ -1197,6 +1197,9 @@ cdef class Class:
     def Omega_b(self):
         return self.ba.Omega0_b
 
+    def Omega_scf(self):
+        return self.ba.Omega0_scf
+
     def omega_b(self):
         return self.ba.Omega0_b * self.ba.h * self.ba.h
 
@@ -1404,6 +1407,36 @@ cdef class Class:
 
         return H
 
+    def Om_scf(self, z):
+        """
+        Omega_scf(z)
+
+        Return the scalar field density fraction (exactly, the quantity defined by Class as index_bg_Omega_scf
+        in the background module)
+
+        Parameters
+        ----------
+        z : float
+                Desired redshift
+        """
+        cdef double tau
+        cdef int last_index #junk
+        cdef double * pvecback
+
+        pvecback = <double*> calloc(self.ba.bg_size,sizeof(double))
+
+        if background_tau_of_z(&self.ba,z,&tau)==_FAILURE_:
+            raise CosmoSevereError(self.ba.error_message)
+
+        if background_at_tau(&self.ba,tau,long_info,inter_normal,&last_index,pvecback)==_FAILURE_:
+            raise CosmoSevereError(self.ba.error_message)
+
+        Om_scf = pvecback[self.ba.index_bg_Omega_scf]
+
+        free(pvecback)
+
+        return Om_scf
+
     def Om_m(self, z):
         """
         Omega_m(z)
@@ -1518,6 +1551,12 @@ cdef class Class:
         Return the sum of Omega0 for all non-relativistic components
         """
         return self.ba.Omega0_m
+
+    def Omega0_scf(self):
+        """
+        Return Omega0_scf
+        """
+        return self.ba.Omega0_scf
 
     def get_background(self):
         """
@@ -1843,6 +1882,8 @@ cdef class Class:
                 value == self.ba.z_scf_max
             elif name == 'omega_m':
                 value = self.ba.Omega0_m*self.ba.h**2
+            elif name == 'Omega_scf':
+                value = self.ba.Omega0_scf
             elif name == 'xi_idr':
                 value = self.ba.T_idr/self.ba.T_cmb
             elif name == 'N_dg':
