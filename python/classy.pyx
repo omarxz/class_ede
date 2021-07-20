@@ -1173,6 +1173,15 @@ cdef class Class:
     def Omega_r(self):
         return self.ba.Omega0_r
 
+    def Omega_scf(self):
+        return self.ba.Omega0_scf
+
+    def f_ede(self):
+        return self.ba.f_scf_max
+
+    def z_ede(self):
+        return self.ba.z_scf_max
+
     def theta_s_100(self):
         return 100.*self.th.rs_rec/self.th.da_rec/(1.+self.th.z_rec)
 
@@ -1826,6 +1835,12 @@ cdef class Class:
                 value = self.ba.Neff
             elif name == 'Omega_m':
                 value = self.ba.Omega0_m
+            elif name == 'Omega_scf':
+                value = self.ba.Omega0_scf
+            elif name == 'f_ede':
+                value == self.ba.f_scf_max
+            elif name == 'z_ede':
+                value == self.ba.z_scf_max
             elif name == 'omega_m':
                 value = self.ba.Omega0_m*self.ba.h**2
             elif name == 'xi_idr':

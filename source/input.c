@@ -801,7 +801,6 @@ int input_needs_shooting_for_target(struct file_content * pfc,
     case Omega_dcdmdr:
     case omega_dcdmdr:
     case Omega_scf:
-    case f_ede_scf:
     case Omega_ini_dcdm:
     case omega_ini_dcdm:
       /* Check that Omega's or omega's are nonzero: */
@@ -1157,10 +1156,10 @@ int input_get_guess(double *xguess,
       break;
     case f_ede_scf:
       /* *
-       * need to optimize shooting by finding an approximate equation for alpha //OR //
+       * need to optimize shooting by finding an approximate equation for alpha //OR added
        * */
-      xguess[index_guess] = 4/sqrt(ba.f_ede_wanted_scf);
-      dxdy[index_guess] = 4.; //-pow(ba.f_ede_wanted_scf,-1.5)
+      xguess[index_guess] = 4/sqrt(ba.f_ede_wanted_scf+0.018);
+      dxdy[index_guess] = 2*0.125*pow(ba.f_ede_wanted_scf,-1.5);
       printf("Initial guess for scf_alpha = %g\n", xguess[index_guess]);
     break;
     case omega_ini_dcdm:
