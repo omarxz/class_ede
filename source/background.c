@@ -2026,7 +2026,12 @@ int background_solve(
       for (index_scf=0; index_scf<pba->scf_parameters_size-1; index_scf++) {
         printf("%g, ",pba->scf_parameters[index_scf]);
       }
-      printf("%g]\n",pba->scf_parameters[pba->scf_parameters_size-1]);
+      if (pba->phiprime_ic_scf==_TRUE_) { //OR
+        printf("%g]\n",pba->scf_parameters[0]*pba->scf_parameters[2]/(3*pba->H_ini)*exp(-pba->scf_parameters[0]*pba->scf_parameters[pba->scf_parameters_size-2]));
+      }
+      else{
+        printf("%g]\n",pba->scf_parameters[pba->scf_parameters_size-1]);
+      }
     }
   }
 
@@ -2068,14 +2073,13 @@ int background_initial_conditions(
 
   /* scale factor */
   double a;
-
   double rho_ncdm, p_ncdm, rho_ncdm_rel_tot=0.;
   double f,Omega_rad, rho_rad;
   int counter,is_early_enough,n_ncdm;
   double scf_lambda;
   double rho_fld_today;
   double w_fld,dw_over_da_fld,integral_fld;
-
+  double H_ini;
   /** - fix initial value of \f$ a \f$ */
   a = ppr->a_ini_over_a_today_default;
 
@@ -2143,7 +2147,7 @@ int background_initial_conditions(
     if (pba->background_verbose > 3)
       printf("Density is %g. Omega_ini=%g\n",pvecback_integration[pba->index_bi_rho_dcdm],pba->Omega_ini_dcdm);
   }
-
+  pba->H_ini=sqrt(rho_rad);
   if (pba->has_dr == _TRUE_) {
     if (pba->has_dcdm == _TRUE_) {
       /**  - f is the critical density fraction of DR. The exact solution is:
@@ -2208,7 +2212,17 @@ int background_initial_conditions(
       printf("Not using attractor initial conditions\n");
       /** - --> If no attractor initial conditions are assigned, gets the provided ones. */
       pvecback_integration[pba->index_bi_phi_scf] = pba->scf_parameters[pba->scf_parameters_size-2];
-      pvecback_integration[pba->index_bi_phi_prime_scf] = pba->scf_parameters[pba->scf_parameters_size-1];
+      if (pba->phiprime_ic_scf==_TRUE_) { //OR
+        printf("Using attractor initial condition for phi_prime\n");
+        /*phi'=-(1/3H)dV/dphi ~=(alpha*V_alpha/3H)*exp(-alpha*phi_i)*/
+        printf("H in the beginning is %g\n",pba->H_ini);
+        pvecback_integration[pba->index_bi_phi_prime_scf] = pba->scf_parameters[0]*pba->scf_parameters[2]/(3*pba->H_ini)*exp(-pba->scf_parameters[0]*pba->scf_parameters[pba->scf_parameters_size-2]);
+        printf("Attractor initial phi_prime = %g \n",pvecback_integration[pba->index_bi_phi_prime_scf]);
+      }
+      else{
+        pvecback_integration[pba->index_bi_phi_prime_scf] = pba->scf_parameters[pba->scf_parameters_size-1];
+        printf("Read phi_prime from input, phi_prime = %g\n",pvecback_integration[pba->index_bi_phi_prime_scf]); //OR
+      }
     }
     class_test(!isfinite(pvecback_integration[pba->index_bi_phi_scf]) ||
                !isfinite(pvecback_integration[pba->index_bi_phi_scf]),

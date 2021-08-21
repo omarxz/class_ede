@@ -116,6 +116,7 @@ struct background
   double Omega_EDE;        /**< \f$ wa_{DE} \f$: Early Dark Energy density parameter */
   double * scf_parameters; /**< list of parameters describing the scalar field potential */
   short attractor_ic_scf;  /**< whether the scalar field has attractor initial conditions */
+  short phiprime_ic_scf;  /**< whether phi_prime_ini scalar field has attractor initial conditions */ //OR
   int scf_tuning_index;    /**< index in scf_parameters used for tuning */
   double phi_ini_scf;      /**< \f$ \phi(t_0) \f$: scalar field initial value */
   double phi_prime_ini_scf;/**< \f$ d\phi(t_0)/d\tau \f$: scalar field initial derivative wrt conformal time */
@@ -144,6 +145,7 @@ struct background
   double Omega0_de; /**< total dark energy density today, currently defined as 1 - Omega0_m - Omega0_r - Omega0_k */
   double a_eq;      /**< scale factor at radiation/matter equality */
   double H_eq;      /**< Hubble rate at radiation/matter equality [Mpc^-1] */
+  double H_ini;     /**< Hubble rate at the initial time [Mpc^-1] */ //OR
   double z_eq;      /**< redshift at radiation/matter equality */
   double tau_eq;    /**< conformal time at radiation/matter equality [Mpc] */
   double z_scf_max; /**< scalar field EDE peak redshift */ //OR added

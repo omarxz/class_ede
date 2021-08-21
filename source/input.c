@@ -2974,7 +2974,23 @@ int input_read_parameters_species(struct file_content * pfc,
                    errmsg,
                    "Since you are not using attractor initial conditions, you must specify phi and its derivative phi' as the last two entries in scf_parameters. See explanatory.ini for more details.");
         pba->phi_ini_scf = pba->scf_parameters[pba->scf_parameters_size-2];
-        pba->phi_prime_ini_scf = pba->scf_parameters[pba->scf_parameters_size-1];
+        /*attractor ic for phi prime?*/
+        class_call(parser_read_string(pfc,
+                                      "phiprime_ic_scf",
+                                      &string1,
+                                      &flag1,
+                                      errmsg),
+                    errmsg,
+                    errmsg);
+        if (flag2 == _TRUE_){
+          if(string_begins_with(string1,'y') || string_begins_with(string1,'Y')){
+            pba->phiprime_ic_scf = _TRUE_;
+          }
+        else{
+          pba->phiprime_ic_scf = _FALSE_;
+          pba->phi_prime_ini_scf = pba->scf_parameters[pba->scf_parameters_size-1];
+         }
+        }
       }
     }
 
