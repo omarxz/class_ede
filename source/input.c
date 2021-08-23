@@ -1146,7 +1146,7 @@ int input_get_guess(double *xguess,
         //Tuning of V_beta //OR added
         xguess[index_guess] = 3*pow(ba.H0,2)*ba.Omega0_scf*0.5;
         dxdy[index_guess] = 3*pow(ba.H0,2)*0.5;
-        printf("Initial guess for scf_tuning_index = %d , V_beta = %g\n", ba.scf_tuning_index, xguess[index_guess]);
+        if (input_verbose > 0) printf("Initial guess for scf_tuning_index = %d , V_beta = %g\n", ba.scf_tuning_index, xguess[index_guess]);
       }
       else{
         /* Default: take the passed value as xguess and set dxdy to 1. */
@@ -3016,7 +3016,7 @@ int input_read_parameters_species(struct file_content * pfc,
     if (flag1 == _TRUE_) {
       if( string_begins_with(string1,'y') || string_begins_with(string1,'Y') ){
         /** If we are shooting for Omega_scf, priint the corresping shooting parameter */ //OR
-        printf("the shooting parameter, V_beta is %g\n",pba->scf_parameters[pba->scf_tuning_index]);
+        if (input_verbose > 0) printf("the shooting parameter, V_beta is %g\n",pba->scf_parameters[pba->scf_tuning_index]);
       }
     }
     class_call(parser_read_string(pfc,
