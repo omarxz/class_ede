@@ -1080,6 +1080,7 @@ int input_get_guess(double *xguess,
   int i;
   double Omega_M, a_decay, gamma, Omega0_dcdmdr=1.0;
   int index_guess;
+  int input_verbose=0; //OR
 
   /* Cheat to read only known parameters: */
   pfzw->fc.size -= pfzw->target_size;
