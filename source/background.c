@@ -2079,7 +2079,6 @@ int background_initial_conditions(
   double scf_lambda;
   double rho_fld_today;
   double w_fld,dw_over_da_fld,integral_fld;
-  double H_ini;
   /** - fix initial value of \f$ a \f$ */
   a = ppr->a_ini_over_a_today_default;
 
