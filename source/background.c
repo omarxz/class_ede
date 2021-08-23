@@ -2208,18 +2208,18 @@ int background_initial_conditions(
       pvecback_integration[pba->index_bi_phi_prime_scf] = 2.*a*sqrt(V_scf(pba,pvecback_integration[pba->index_bi_phi_scf]))*pba->phi_prime_ini_scf;
     }
     else {
-      printf("Not using attractor initial conditions\n");
+      if (pba->background_verbose > 0) printf("Not using attractor initial conditions\n");
       /** - --> If no attractor initial conditions are assigned, gets the provided ones. */
       pvecback_integration[pba->index_bi_phi_scf] = pba->scf_parameters[pba->scf_parameters_size-2];
       if (pba->phiprime_ic_scf==_TRUE_) { //OR
-        printf("Using attractor initial condition for phi_prime\n");
+        if (pba->background_verbose > 0) printf("Using attractor initial condition for phi_prime\n");
         /*phi'=-(1/3H)dV/dphi ~=(alpha*V_alpha/3H)*exp(-alpha*phi_i)*/
         pvecback_integration[pba->index_bi_phi_prime_scf] = pba->scf_parameters[0]*pba->scf_parameters[2]/(3*pba->H_ini)*exp(-pba->scf_parameters[0]*pba->scf_parameters[pba->scf_parameters_size-2]);
-        printf("Attractor initial phi_prime = %g \n",pvecback_integration[pba->index_bi_phi_prime_scf]);
+        if (pba->background_verbose > 0) printf("Attractor initial phi_prime = %g \n",pvecback_integration[pba->index_bi_phi_prime_scf]);
       }
       else{
         pvecback_integration[pba->index_bi_phi_prime_scf] = pba->scf_parameters[pba->scf_parameters_size-1];
-        printf("Read phi_prime from input, phi_prime = %g\n",pvecback_integration[pba->index_bi_phi_prime_scf]); //OR
+        if (pba->background_verbose > 0) printf("Read phi_prime from input, phi_prime = %g\n",pvecback_integration[pba->index_bi_phi_prime_scf]); //OR
       }
     }
     class_test(!isfinite(pvecback_integration[pba->index_bi_phi_scf]) ||
