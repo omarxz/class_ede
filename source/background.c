@@ -2215,7 +2215,6 @@ int background_initial_conditions(
       if (pba->phiprime_ic_scf==_TRUE_) { //OR
         printf("Using attractor initial condition for phi_prime\n");
         /*phi'=-(1/3H)dV/dphi ~=(alpha*V_alpha/3H)*exp(-alpha*phi_i)*/
-        printf("H in the beginning is %g\n",pba->H_ini);
         pvecback_integration[pba->index_bi_phi_prime_scf] = pba->scf_parameters[0]*pba->scf_parameters[2]/(3*pba->H_ini)*exp(-pba->scf_parameters[0]*pba->scf_parameters[pba->scf_parameters_size-2]);
         printf("Attractor initial phi_prime = %g \n",pvecback_integration[pba->index_bi_phi_prime_scf]);
       }
