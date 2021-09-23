@@ -95,6 +95,7 @@ cdef extern from "class.h":
         double Omega0_k
         double f_scf_max
         double z_scf_max
+        double v_beta
         int bt_size
         double Omega0_m
         double Omega0_r

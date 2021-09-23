@@ -2039,6 +2039,8 @@ int background_solve(
   pba->Omega0_m = pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_Omega_m];
   pba->Omega0_r = pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_Omega_r];
   pba->Omega0_de = 1. - (pba->Omega0_m + pba->Omega0_r + pba->Omega0_k);
+  /**save V_beta in class to pass to classy*/
+  pba->v_beta=pba->scf_parameters[3];
 
   free(pvecback);
   free(pvecback_integration);

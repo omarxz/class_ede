@@ -1844,6 +1844,8 @@ cdef class Class:
                 value = self.ba.f_scf_max
             elif name == 'z_ede':
                 value = self.ba.z_scf_max
+            elif name == 'v_beta':
+                value = self.ba.v_beta
             elif name == 'omega_m':
                 value = self.ba.Omega0_m*self.ba.h**2
             elif name == 'Omega_scf':
