@@ -66,6 +66,7 @@ cdef extern from "class.h":
         int index_bg_D
         int index_bg_f
         int index_bg_Omega_m
+        int index_bg_Omega_scf
         short  has_ncdm
         double T_cmb
         double h
@@ -92,6 +93,9 @@ cdef extern from "class.h":
         double Omega0_dr
         double Omega0_scf
         double Omega0_k
+        double f_scf_max
+        double z_scf_max
+        double v_beta
         int bt_size
         double Omega0_m
         double Omega0_r

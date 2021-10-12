@@ -203,9 +203,9 @@
  * For shooting method: definition of the possible targets
  */
 
-enum target_names {theta_s, Omega_dcdmdr, omega_dcdmdr, Omega_scf, Omega_ini_dcdm, omega_ini_dcdm, sigma8};
+enum target_names {theta_s, Omega_dcdmdr, omega_dcdmdr, Omega_scf, f_ede_scf, Omega_ini_dcdm, omega_ini_dcdm, sigma8}; //OR edited
 /* Important: Keep this number equal to the number of target_names */
-#define _NUM_TARGETS_ 7
+#define _NUM_TARGETS_ 8 //OR edited
 /* Important: add one for each new target_names */
 enum computation_stage {cs_background, cs_thermodynamics, cs_perturbations, cs_primordial, cs_nonlinear, cs_transfer, cs_spectra};
 
@@ -220,6 +220,7 @@ struct fzerofun_workspace {
   double * target_value;
   int target_size;
   enum computation_stage required_computation_stage;
+  short do_shooting;    /** should we shoot using Omega_scf? will only turn off shooting for that one parameter */
 };
 
 /**************************************************************/

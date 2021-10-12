@@ -218,7 +218,7 @@ def plot_CLASS_output(files, x_axis, y_axis, ratio=False, printing='',
                     ax.set_xscale('planck')
                 text += [plot_line]
 
-            legend.extend([roots[index]+': '+elem for elem in y_axis])
+            legend.extend([elem for elem in y_axis])
 
         ax.legend(legend, loc='best')
         text += ["",
