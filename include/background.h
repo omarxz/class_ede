@@ -128,14 +128,12 @@ struct background
   double f_ede_wanted_scf;        /**< scalar field fraction of EDE */ //OR added
   double scf_alpha_shooting;/**< scalar field EDE fraction shooting parameter*/ //OR added
   int scf_parameters_size; /**< size of scf_parameters */
-<<<<<<< HEAD
   enum quintessence_potential scf_potential;  /**< choosing between quintessence potentials */ //OR added
-=======
   double varconst_alpha; /**< finestructure constant for varying fundamental constants */
   double varconst_me; /**< electron mass for varying fundamental constants */
   enum varconst_dependence varconst_dep; /**< dependence of the varying fundamental constants as a function of time */
   double varconst_transition_redshift; /**< redshift of transition between varied fundamental constants and normal fundamental constants in the 'varconst_instant' case*/
->>>>>>> master
+
 
   //@}
 
