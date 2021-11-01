@@ -3011,7 +3011,11 @@ int input_read_parameters_species(struct file_content * pfc,
                                            &flag1,
                                            errmsg),
                errmsg,errmsg);
-
+    if (pba->scf_parameters[2] < 0){
+      /*printf("V_alpha = %g\n",pba->scf_parameters[2]);*/
+      pba->scf_parameters[2] = pow(10,pba->scf_parameters[2]);
+      /*printf("V_alpha < 0 -> Passed log10 value -> V_alpha= %g\n",pba->scf_parameters[2]);*/
+    }
     /** 8.b.2) SCF initial conditions from attractor solution */
     /* Read */
     class_call(parser_read_string(pfc,
