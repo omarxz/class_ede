@@ -592,8 +592,6 @@ int background_functions(
     pvecback[pba->index_bg_p_prime_scf] = pvecback[pba->index_bg_phi_prime_scf]*
       (-pvecback[pba->index_bg_phi_prime_scf]*pvecback[pba->index_bg_H]/a-2./3.*pvecback[pba->index_bg_dV_scf]);
     pvecback[pba->index_bg_p_tot_prime] += pvecback[pba->index_bg_p_prime_scf];
-    /** - compute Omega_scf */
-    pvecback[pba->index_bg_Omega_scf] =  pvecback[pba->index_bg_rho_scf] / rho_crit; //OR added
   }
 
   /** - compute critical density */
@@ -605,6 +603,10 @@ int background_functions(
   /** - compute relativistic density to total density ratio */
   pvecback[pba->index_bg_Omega_r] = rho_r / rho_crit;
 
+  /** - compute scalar field density to total density ratio */
+  if (pba->has_scf == _TRUE_) {
+    pvecback[pba->index_bg_Omega_scf] =  pvecback[pba->index_bg_rho_scf] / rho_crit; //OR added
+  }
   /** - compute other quantities in the exhaustive, redundant format */
   if (return_format == long_info) {
 
