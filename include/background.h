@@ -133,7 +133,8 @@ struct background
   double varconst_me; /**< electron mass for varying fundamental constants */
   enum varconst_dependence varconst_dep; /**< dependence of the varying fundamental constants as a function of time */
   double varconst_transition_redshift; /**< redshift of transition between varied fundamental constants and normal fundamental constants in the 'varconst_instant' case*/
-
+  double z_scf_max; /**< scalar field EDE peak redshift */ //OR added
+  double f_scf_max; /**< scalar field EDE peak injection */ //OR added
 
   //@}
 
@@ -158,8 +159,6 @@ struct background
   double H_ini;     /**< Hubble rate at the initial time [Mpc^-1] */ //OR
   double z_eq;      /**< redshift at radiation/matter equality */
   double tau_eq;    /**< conformal time at radiation/matter equality [Mpc] */
-  double z_scf_max; /**< scalar field EDE peak redshift */ //OR added
-  double f_scf_max; /**< scalar field EDE peak injection */ //OR added
 
   //@}
 

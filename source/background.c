@@ -1884,9 +1884,9 @@ int background_solve(
   /* conformal distance in Mpc (equal to comoving radius in flat case) */
   double conformal_distance;
   /**< scalar field EDE peak redshift */ //OR added
-  double z_peak_new;
+  double z_peak_new=0.;
   /**< scalar field EDE peak injection */ //OR added
-  double f_peak_new;
+  double f_peak_new=0.;
 
   /* evolvers */
   extern int evolver_rk();

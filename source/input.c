@@ -5551,6 +5551,9 @@ int input_default_params(struct background *pba,
   pba->scf_tuning_index = 0;
   /** 9.b.4) Shooting parameter */
   pba->shooting_failed = _FALSE_;
+  /** Omar EDE initialise */
+  pba->f_scf_max = 0.;
+  pba->z_scf_max = 0.;
 
   /**
    * Deafult to input_read_parameters_heating
