@@ -3134,8 +3134,12 @@ int perturbations_prepare_k_output(struct background * pba,
       class_store_columntitle(ppt->scalar_titles,"pol0_g",_TRUE_);
       class_store_columntitle(ppt->scalar_titles,"pol1_g",_TRUE_);
       class_store_columntitle(ppt->scalar_titles,"pol2_g",_TRUE_);
+      class_store_columntitle(ppt->scalar_titles,"rho_plus_p_theta_g",_TRUE_); //OR added
+      class_store_columntitle(ppt->scalar_titles,"delta_rho_g",_TRUE_); //OR added
       class_store_columntitle(ppt->scalar_titles,"delta_b",_TRUE_);
       class_store_columntitle(ppt->scalar_titles,"theta_b",_TRUE_);
+      class_store_columntitle(ppt->scalar_titles,"rho_plus_p_theta_b",_TRUE_); //OR added
+      class_store_columntitle(ppt->scalar_titles,"delta_rho_b",_TRUE_); //OR added
       class_store_columntitle(ppt->scalar_titles,"psi",_TRUE_);
       class_store_columntitle(ppt->scalar_titles,"phi",_TRUE_);
       /* Perturbed recombination */
@@ -3145,6 +3149,8 @@ int perturbations_prepare_k_output(struct background * pba,
       class_store_columntitle(ppt->scalar_titles,"delta_ur",pba->has_ur);
       class_store_columntitle(ppt->scalar_titles,"theta_ur",pba->has_ur);
       class_store_columntitle(ppt->scalar_titles,"shear_ur",pba->has_ur);
+      class_store_columntitle(ppt->scalar_titles,"rho_plus_p_theta_ur",pba->has_ur); //OR added
+      class_store_columntitle(ppt->scalar_titles,"delta_rho_ur",pba->has_ur); //OR added
       /* Interacting dark radiation */
       class_store_columntitle(ppt->scalar_titles,"delta_idr",pba->has_idr);
       class_store_columntitle(ppt->scalar_titles,"theta_idr",pba->has_idr);
@@ -3156,6 +3162,8 @@ int perturbations_prepare_k_output(struct background * pba,
       /* Cold dark matter */
       class_store_columntitle(ppt->scalar_titles,"delta_cdm",pba->has_cdm);
       class_store_columntitle(ppt->scalar_titles,"theta_cdm",pba->has_cdm);
+      class_store_columntitle(ppt->scalar_titles,"delta_rho_cdm",pba->has_cdm);
+
       /* Non-cold dark matter */
       if ((pba->has_ncdm == _TRUE_) && ((ppt->has_density_transfers == _TRUE_) || (ppt->has_velocity_transfers == _TRUE_) || (ppt->has_source_delta_m == _TRUE_))) {
         for(n_ncdm=0; n_ncdm < pba->N_ncdm; n_ncdm++){
@@ -3179,6 +3187,9 @@ int perturbations_prepare_k_output(struct background * pba,
       /* Scalar field scf */
       class_store_columntitle(ppt->scalar_titles, "delta_scf", pba->has_scf);
       class_store_columntitle(ppt->scalar_titles, "theta_scf", pba->has_scf);
+      class_store_columntitle(ppt->scalar_titles, "rho_plus_p_theta_scf", pba->has_scf); //OR added
+      class_store_columntitle(ppt->scalar_titles, "delta_rho_scf", pba->has_scf); //OR added
+
       /** Fluid */
       class_store_columntitle(ppt->scalar_titles, "delta_rho_fld", pba->has_fld);
       class_store_columntitle(ppt->scalar_titles, "rho_plus_p_theta_fld", pba->has_fld);
@@ -8064,61 +8075,18 @@ int perturbations_print_variables(double tau,
       theta_scf = rho_plus_p_theta_scf/(pvecback[pba->index_bg_rho_scf]+pvecback[pba->index_bg_p_scf]);
 
     }
+    //Different (rho+p)\theta //OR
+    ppw->rho_plus_p_theta_g = 4./3.*ppw->pvecback[pba->index_bg_rho_g]*theta_g; //OR added
+    ppw->rho_plus_p_theta_b = ppw->pvecback[pba->index_bg_rho_b]*y[ppw->pv->index_pt_theta_b]; //OR added
+    ppw->rho_plus_p_theta_ur =4./3.*ppw->pvecback[pba->index_bg_rho_ur]*theta_ur; //OR added
+      //Different (rho)\delta //OR
+    ppw->delta_rho_g = 4./3.*ppw->pvecback[pba->index_bg_rho_g]*delta_g; //OR added
+    ppw->delta_rho_b = ppw->pvecback[pba->index_bg_rho_b]*y[ppw->pv->index_pt_delta_b]; //OR added
+    ppw->delta_rho_ur = 4./3.*ppw->pvecback[pba->index_bg_rho_ur]*delta_ur; //OR added
+    ppw->delta_rho_cdm = ppw->pvecback[pba->index_bg_rho_cdm]*delta_cdm; //OR added
 
     /* converting synchronous variables to newtonian ones */
-    if (ppt->gauge == synchronous) {
 
-      /* density and velocity perturbations (comment out if you wish to keep synchronous variables) */
-
-      delta_g -= 4. * pvecback[pba->index_bg_H]*pvecback[pba->index_bg_a]*alpha;
-      theta_g += k*k*alpha;
-
-      delta_b -= 3. * pvecback[pba->index_bg_H]*pvecback[pba->index_bg_a]*alpha;
-      theta_b += k*k*alpha;
-
-      if (pba->has_ur == _TRUE_) {
-        delta_ur -= 4. * pvecback[pba->index_bg_H]*pvecback[pba->index_bg_a]*alpha;
-        theta_ur += k*k*alpha;
-      }
-
-      if (pba->has_idr == _TRUE_) {
-        delta_idr -= 4. * pvecback[pba->index_bg_H]*pvecback[pba->index_bg_a]*alpha;
-        theta_idr += k*k*alpha;
-      }
-
-      if (pba->has_dr == _TRUE_) {
-        delta_dr += (-4.*a*H+a*pba->Gamma_dcdm*pvecback[pba->index_bg_rho_dcdm]/pvecback[pba->index_bg_rho_dr])*alpha;
-
-        theta_dr += k*k*alpha;
-      }
-
-      if (pba->has_cdm == _TRUE_) {
-        delta_cdm -= 3. * pvecback[pba->index_bg_H]*pvecback[pba->index_bg_a]*alpha;
-        theta_cdm += k*k*alpha;
-      }
-
-      if (pba->has_idm_dr == _TRUE_) {
-        delta_idm_dr -= 3. * pvecback[pba->index_bg_H]*pvecback[pba->index_bg_a]*alpha;
-        theta_idm_dr += k*k*alpha;
-      }
-
-      if (pba->has_ncdm == _TRUE_) {
-        for(n_ncdm=0; n_ncdm < pba->N_ncdm; n_ncdm++){
-          /** - --> TODO: gauge transformation of delta, deltaP/rho (?) and theta using -= 3aH(1+w_ncdm) alpha for delta. */
-        }
-      }
-
-      if (pba->has_dcdm == _TRUE_) {
-        delta_dcdm += alpha*(-a*pba->Gamma_dcdm-3.*a*H);
-        theta_dcdm += k*k*alpha;
-      }
-
-      if (pba->has_scf == _TRUE_) {
-        delta_scf += alpha*(-3.0*H*(1.0+pvecback[pba->index_bg_p_scf]/pvecback[pba->index_bg_rho_scf]));
-        theta_scf += k*k*alpha;
-      }
-
-    }
 
     //    fprintf(ppw->perturbations_output_file," ");
     /** - --> Handle (re-)allocation */
@@ -8146,8 +8114,12 @@ int perturbations_print_variables(double tau,
     class_store_double(dataptr, pol0_g, _TRUE_, storeidx);
     class_store_double(dataptr, pol1_g, _TRUE_, storeidx);
     class_store_double(dataptr, pol2_g, _TRUE_, storeidx);
+    class_store_double(dataptr, ppw->rho_plus_p_theta_g, _TRUE_, storeidx); //OR added
+    class_store_double(dataptr, ppw->delta_rho_g, _TRUE_, storeidx); //OR added
     class_store_double(dataptr, delta_b, _TRUE_, storeidx);
     class_store_double(dataptr, theta_b, _TRUE_, storeidx);
+    class_store_double(dataptr, ppw->rho_plus_p_theta_b, _TRUE_, storeidx); //OR added
+    class_store_double(dataptr, ppw->delta_rho_b, _TRUE_, storeidx); //OR added
     class_store_double(dataptr, psi, _TRUE_, storeidx);
     class_store_double(dataptr, phi, _TRUE_, storeidx);
     /* perturbed recombination */
@@ -8157,6 +8129,8 @@ int perturbations_print_variables(double tau,
     class_store_double(dataptr, delta_ur, pba->has_ur, storeidx);
     class_store_double(dataptr, theta_ur, pba->has_ur, storeidx);
     class_store_double(dataptr, shear_ur, pba->has_ur, storeidx);
+    class_store_double(dataptr, ppw->rho_plus_p_theta_ur, pba->has_ur, storeidx); //OR added
+    class_store_double(dataptr, ppw->delta_rho_ur,pba->has_ur, storeidx); //OR added
     /* Interacting dark radiation */
     class_store_double(dataptr, delta_idr, pba->has_idr, storeidx);
     class_store_double(dataptr, theta_idr, pba->has_idr, storeidx);
@@ -8168,6 +8142,8 @@ int perturbations_print_variables(double tau,
     /* Cold dark matter */
     class_store_double(dataptr, delta_cdm, pba->has_cdm, storeidx);
     class_store_double(dataptr, theta_cdm, pba->has_cdm, storeidx);
+    class_store_double(dataptr, ppw->delta_rho_cdm, pba->has_cdm, storeidx);
+
     /* Non-cold Dark Matter */
     if ((pba->has_ncdm == _TRUE_) && ((ppt->has_density_transfers == _TRUE_) || (ppt->has_velocity_transfers == _TRUE_) || (ppt->has_source_delta_m == _TRUE_))) {
       for(n_ncdm=0; n_ncdm < pba->N_ncdm; n_ncdm++){
@@ -8187,6 +8163,8 @@ int perturbations_print_variables(double tau,
     /* Scalar field scf*/
     class_store_double(dataptr, delta_scf, pba->has_scf, storeidx);
     class_store_double(dataptr, theta_scf, pba->has_scf, storeidx);
+    class_store_double(dataptr, rho_plus_p_theta_scf, pba->has_scf, storeidx); //OR added
+    class_store_double(dataptr, delta_rho_scf, pba->has_scf, storeidx); //OR added
     /** Fluid */
     class_store_double(dataptr, ppw->delta_rho_fld, pba->has_fld, storeidx);
     class_store_double(dataptr, ppw->rho_plus_p_theta_fld, pba->has_fld, storeidx);
