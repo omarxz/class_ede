@@ -572,8 +572,12 @@ struct perturbations_workspace
   double tca_shear_idm_dr;/**< interacting dark radiation shear in tight coupling appproximation */
   double rsa_delta_g;  /**< photon density in radiation streaming approximation */
   double rsa_theta_g;  /**< photon velocity in radiation streaming approximation */
+  double rho_plus_p_theta_g; /**< velocity divergence of photons */ //OR added
+  double delta_rho_g;  /**< photon stress energy tensor (0,0) linear perturbation */ //OR added
   double rsa_delta_ur; /**< photon density in radiation streaming approximation */
   double rsa_theta_ur; /**< photon velocity in radiation streaming approximation */
+  double rho_plus_p_theta_ur; /**< velocity divergence of neutrinos */ //OR added
+  double delta_rho_ur;  /**< neutrinos stress energy tensor (0,0) linear perturbation */ //OR added
   double rsa_delta_idr; /**< interacting dark radiation density in dark radiation streaming approximation */
   double rsa_theta_idr; /**< interacting dark radiation velocity in dark radiation streaming approximation */
 
@@ -583,6 +587,11 @@ struct perturbations_workspace
 
   double delta_m;	/**< relative density perturbation of all non-relativistic species */
   double theta_m;	/**< velocity divergence theta of all non-relativistic species */
+  double rho_plus_p_theta_b; /**< velocity divergence of baryons */ //OR added
+  double delta_rho_b;  /**< baryon stress energy tensor (0,0) linear perturbation */ //OR added
+  double delta_rho_cdm;  /**< cdm stress energy tensor (0,0) linear perturbation */ //OR added
+
+
 
   double delta_cb;       /**< relative density perturbation of only cdm and baryon */
   double theta_cb;       /**< velocity divergence theta of only cdm and baryon */
