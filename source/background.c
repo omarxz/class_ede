@@ -2017,11 +2017,11 @@ int background_solve(
       if( (z_peak_new > 900) && (z_peak_new < 10e10) ){
           f_peak_new = pba->background_table[index_loga*pba->bg_size+pba->index_bg_rho_scf]/pba->background_table[index_loga*pba->bg_size+pba->index_bg_rho_tot];
       // assign potentially new peak redshift
-        if (f_peak_new > pba->f_scf_max){
-          // calculate fraction of EDE at this redshift
-            // if it’s larger than previously calculated f_ede then reset the z_scf_max and f_scf_max
-            pba->z_scf_max = z_peak_new;
-            pba->f_scf_max = f_peak_new;
+          if (f_peak_new > pba->f_scf_max){
+            // calculate fraction of EDE at this redshift
+              // if it’s larger than previously calculated f_ede then reset the z_scf_max and f_scf_max
+              pba->z_scf_max = z_peak_new;
+              pba->f_scf_max = f_peak_new;
         }
       }
     }
