@@ -6862,7 +6862,8 @@ int perturbations_total_stress_energy(
        from rho_plus_p_shear. So the contribution from the scalar field must be below all
        species with non-zero shear.
     */
-    if (pba->has_scf == _TRUE_) {
+   /**
+    if (pba->has_scf == _TRUE_) {  // OR delete this
 
       if (ppt->gauge == synchronous){
         delta_rho_scf =  1./3.*
@@ -6874,7 +6875,7 @@ int perturbations_total_stress_energy(
       }
       else{
         /* equation for psi */
-        psi = y[ppw->pv->index_pt_phi] - 4.5 * (a2/k/k) * ppw->rho_plus_p_shear;
+      /*  psi = y[ppw->pv->index_pt_phi] - 4.5 * (a2/k/k) * ppw->rho_plus_p_shear;
 
         delta_rho_scf =  1./3.*
           (1./a2*ppw->pvecback[pba->index_bg_phi_prime_scf]*y[ppw->pv->index_pt_phi_prime_scf]
@@ -6895,8 +6896,7 @@ int perturbations_total_stress_energy(
 
       ppw->rho_plus_p_tot += ppw->pvecback[pba->index_bg_rho_scf]+ppw->pvecback[pba->index_bg_p_scf];
 
-    }
-
+    }*/
     /* add your extra species here */
 
     /* fluid contribution */
