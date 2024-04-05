@@ -4,7 +4,7 @@ class
 *.prof
 libclass.a
 *out
-python/classy.c
+python/classy.cpp
 *.pyc
 python/build/
 *.dSYM
