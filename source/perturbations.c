@@ -8500,7 +8500,6 @@ int perturbations_print_variables(double tau,
   /** - for tensor modes: */
 
   if (_tensors_) {
-
     if (ppw->approx[ppw->index_ap_rsa]==(int)rsa_off) {
       if (ppw->approx[ppw->index_ap_tca]==(int)tca_off) {
         delta_g = y[ppw->pv->index_pt_delta_g];
@@ -8623,9 +8622,7 @@ int perturbations_print_variables(double tau,
     free(shear_ncdm);
     free(delta_p_over_delta_rho_ncdm);
   }
-
   return _SUCCESS_;
-
 }
 
 /**
