@@ -8623,7 +8623,6 @@ int perturbations_print_variables(double tau,
     free(delta_p_over_delta_rho_ncdm);
   }
   return _SUCCESS_;
-}
 
 /**
  * Compute derivative of all perturbations to be integrated
