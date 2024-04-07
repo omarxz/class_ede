@@ -7073,7 +7073,7 @@ int perturbations_total_stress_energy(
        from rho_plus_p_shear. So the contribution from the scalar field must be below all
        species with non-zero shear.
     */
-   /**
+   
     if (pba->has_scf == _TRUE_) {  // OR delete this
 
       if (ppt->gauge == synchronous){
@@ -7086,7 +7086,7 @@ int perturbations_total_stress_energy(
       }
       else{
         /* equation for psi */
-      /*  psi = y[ppw->pv->index_pt_phi] - 4.5 * (a2/k/k) * ppw->rho_plus_p_shear;
+        psi = y[ppw->pv->index_pt_phi] - 4.5 * (a2/k/k) * ppw->rho_plus_p_shear;
 
         delta_rho_scf =  1./3.*
           (1./a2*ppw->pvecback[pba->index_bg_phi_prime_scf]*y[ppw->pv->index_pt_phi_prime_scf]
@@ -7107,7 +7107,7 @@ int perturbations_total_stress_energy(
 
       ppw->rho_plus_p_tot += ppw->pvecback[pba->index_bg_rho_scf]+ppw->pvecback[pba->index_bg_p_scf];
 
-    }*/
+    }
     /* add your extra species here */
 
     /* fluid contribution */
@@ -8350,6 +8350,7 @@ int perturbations_print_variables(double tau,
       theta_scf = rho_plus_p_theta_scf/(pvecback[pba->index_bg_rho_scf]+pvecback[pba->index_bg_p_scf]);
 
     }
+
     //Different (rho+p)\theta //OR
     ppw->rho_plus_p_theta_g = 4./3.*ppw->pvecback[pba->index_bg_rho_g]*theta_g; //OR added
     ppw->rho_plus_p_theta_b = ppw->pvecback[pba->index_bg_rho_b]*y[ppw->pv->index_pt_theta_b]; //OR added
@@ -8361,7 +8362,7 @@ int perturbations_print_variables(double tau,
     ppw->delta_rho_cdm = ppw->pvecback[pba->index_bg_rho_cdm]*delta_cdm; //OR added
 
     /* converting synchronous variables to newtonian ones */
-
+    if (ppt->gauge == synchronous) {
       /* density and velocity perturbations (comment out if you wish to keep synchronous variables) */
 
       delta_g -= 4. * pvecback[pba->index_bg_H]*pvecback[pba->index_bg_a]*alpha;
@@ -8500,6 +8501,7 @@ int perturbations_print_variables(double tau,
   /** - for tensor modes: */
 
   if (_tensors_) {
+
     if (ppw->approx[ppw->index_ap_rsa]==(int)rsa_off) {
       if (ppw->approx[ppw->index_ap_tca]==(int)tca_off) {
         delta_g = y[ppw->pv->index_pt_delta_g];
@@ -8622,7 +8624,9 @@ int perturbations_print_variables(double tau,
     free(shear_ncdm);
     free(delta_p_over_delta_rho_ncdm);
   }
+
   return _SUCCESS_;
+  
 }
 
 /**
