@@ -1988,6 +1988,10 @@ int background_solve(
   pba->age = pvecback_integration[pba->index_bi_time]/_Gyr_over_Mpc_;
   /* -> conformal age in Mpc */
   pba->conformal_age = pvecback_integration[pba->index_bi_tau];
+  /* EoS for scalar field */
+  if (pba->has_scf == _TRUE_) {
+    pba->w0_scf = pvecback[pba->index_bg_w_scf];
+  }
   /* -> contribution of decaying dark matter and dark radiation to the critical density today: */
   if (pba->has_dcdm == _TRUE_) {
     pba->Omega0_dcdm = pvecback_integration[pba->index_bi_rho_dcdm]/pba->H0/pba->H0;

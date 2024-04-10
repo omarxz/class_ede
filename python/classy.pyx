@@ -2323,6 +2323,8 @@ cdef class Class:
                 value = self.ba.Omega0_m
             elif name == 'Omega_scf':
                 value = self.ba.Omega0_scf
+            elif name == 'w0_scf':
+                value = self.ba.w0_scf
             elif name == 'f_ede':
                 value = self.ba.f_scf_max
             elif name == 'z_ede':

@@ -108,7 +108,8 @@ struct background
 
   double Omega0_lambda;    /**< \f$ \Omega_{0_\Lambda} \f$: cosmological constant */
   double Omega0_fld;       /**< \f$ \Omega_{0 de} \f$: fluid */
-  double Omega0_scf;       /**< \f$ \Omega_{0 scf} \f$: scalar field */
+  double Omega0_scf;       /**< \f$ \Omega_{0 scf} \f$: scalar field */ 
+  double w0_scf;       /**< \f$ \w_{0 scf} \f$: scalar field */ //OR ADDED
   short use_ppf; /**< flag switching on PPF perturbation equations instead of true fluid equations for perturbations. It could have been defined inside
                     perturbation structure, but we leave it here in such way to have all fld parameters grouped. */
   double c_gamma_over_c_fld; /**< ppf parameter defined in eq. (16) of 0808.3125 [astro-ph] */

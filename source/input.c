@@ -1260,8 +1260,8 @@ int input_get_guess(double *xguess,
        * */
       if (ba.scf_tuning_index == 3){
         //Tuning of V_beta //OR added
-        xguess[index_guess] = 3*pow(ba.H0,2)*ba.Omega0_scf*0.5;
-        dxdy[index_guess] = 2.76*pow(ba.H0,2)*0.06; /* 3*pow(ba.H0,2)*0.04; 0.05 */ 
+        xguess[index_guess] = 3*pow(ba.H0,2)*ba.Omega0_scf*0/8;
+        dxdy[index_guess] = pow(ba.H0,2); /* 2.76*pow(ba.H0,2)*0.06 */ 
         if (input_verbose > 0) printf("Initial guess for scf_tuning_index = %d , V_beta = %g\n", ba.scf_tuning_index, xguess[index_guess]);
       }
       else{
