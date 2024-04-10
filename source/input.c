@@ -3344,6 +3344,9 @@ int input_read_parameters_species(struct file_content * pfc,
       else if ((strstr(string1,"EXPEXP") != NULL) || (strstr(string1,"expexp") != NULL)) {
         pba->scf_potential = EXPEXP;
       }
+      else if ((strstr(string1,"EXP") != NULL) || (strstr(string1,"exp") != NULL)) {
+        pba->scf_potential = EXP;
+      }
       else {
         class_stop(errmsg,"incomprehensible input '%s' for the field 'scf_potential'",string1);
       }

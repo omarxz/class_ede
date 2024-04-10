@@ -20,7 +20,7 @@ enum equation_of_state {CLP,EDE};
 
 /** list of possible scalar field potentials */ //OR added
 
-enum quintessence_potential {EXPETA,EXPEXP};
+enum quintessence_potential {EXPETA,EXPEXP,EXP};
 
 /** list of possible parametrizations of the varying fundamental constants */
 enum varconst_dependence {varconst_none,varconst_instant};

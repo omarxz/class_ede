@@ -2093,11 +2093,15 @@ int background_solve(
     }
     if (pba->has_scf == _TRUE_){
       printf("    Scalar field details:\n");
-      printf("     -> f_EDE = %f at z = %f\n", pba->f_scf_max, pba->z_scf_max);
       if (pba->scf_potential == EXPEXP){  //OR added
+      printf("     -> f_EDE = %f at z = %f\n", pba->f_scf_max, pba->z_scf_max);
       printf("     -> V(phi) = scf_V_1*exp(-scf_alpha*phi)+scf_V_2*exp(-scf_beta*phi)\n");
       }
+      if (pba->scf_potential == EXP){  //OR added
+      printf("     -> V(phi) = scf_V_2*exp(-scf_beta*phi)\n");
+      }
       else if (pba->scf_potential == EXPETA){ //OR added
+      printf("     -> f_EDE = %f at z = %f\n", pba->f_scf_max, pba->z_scf_max);
       printf("     -> V(phi) = scf_V_1*(scf_V_2+exp(-scf_alpha*phi))^(-scf_beta)\n");
       }
       printf("     -> Omega_scf = %g, wished %g\n",
@@ -2112,7 +2116,12 @@ int background_solve(
         printf("%g, ",pba->scf_parameters[index_scf]);
       }
       if (pba->phiprime_ic_scf==_TRUE_) { //OR
-        printf("%g]\n",pba->scf_parameters[0]*pba->scf_parameters[2]/(3*pba->H_ini)*exp(-pba->scf_parameters[0]*pba->scf_parameters[pba->scf_parameters_size-2]));
+        if (pba->scf_potential == EXPEXP){
+          printf("%g]\n",pba->scf_parameters[0]*pba->scf_parameters[2]/(3*pba->H_ini)*exp(-pba->scf_parameters[0]*pba->scf_parameters[pba->scf_parameters_size-2]));
+        }
+        else if (pba->scf_potential == EXP) {
+          printf("%g]\n",pba->scf_parameters[1]*pba->scf_parameters[3]/(3*pba->H_ini)*exp(-pba->scf_parameters[1]*pba->scf_parameters[pba->scf_parameters_size-2]));
+        }
       }
       else{
         printf("%g]\n",pba->scf_parameters[pba->scf_parameters_size-1]);
@@ -2318,7 +2327,12 @@ int background_initial_conditions(
       if (pba->phiprime_ic_scf==_TRUE_) { //OR
         if (pba->background_verbose > 0) printf("Using attractor initial condition for phi_prime\n");
         /*phi'=-(1/3H)dV/dphi ~=(alpha*V_alpha/3H)*exp(-alpha*phi_i)*/
-        pvecback_integration[pba->index_bi_phi_prime_scf] = pba->scf_parameters[0]*pba->scf_parameters[2]/(3*pba->H_ini)*exp(-pba->scf_parameters[0]*pba->scf_parameters[pba->scf_parameters_size-2]);
+        if (pba->scf_potential == EXPEXP) {
+          pvecback_integration[pba->index_bi_phi_prime_scf] = pba->scf_parameters[0]*pba->scf_parameters[2]/(3*pba->H_ini)*exp(-pba->scf_parameters[0]*pba->scf_parameters[pba->scf_parameters_size-2]);
+        }
+        else if (pba->scf_potential == EXP) {
+          pvecback_integration[pba->index_bi_phi_prime_scf] = pba->scf_parameters[1]*pba->scf_parameters[3]/(3*pba->H_ini)*exp(-pba->scf_parameters[1]*pba->scf_parameters[pba->scf_parameters_size-2]);
+        }
         if (pba->background_verbose > 0) printf("Attractor initial phi_prime = %g \n",pvecback_integration[pba->index_bi_phi_prime_scf]);
       }
       else{
@@ -2976,6 +2990,14 @@ double V_scf(struct background *pba,
       * - \f$ V(\phi) = scf_V_1(scf_V_2+\exp(-\alpha\phi))^(-\beta)  */
       V_phi = scf_V_1*exp(-scf_alpha*phi)+scf_V_2*exp(-scf_beta*phi);
     break;
+    case EXP:
+      /** Exponential 
+
+      The potential is given by
+
+      * - \f$ V(\phi) = scf_V_0*\exp(-\beta\phi)  */
+      V_phi = scf_V_2*exp(-scf_beta*phi);
+    break;
     }
     return V_phi;
 }
@@ -2995,6 +3017,9 @@ double dV_scf(struct background *pba,
   break;
   case EXPEXP:
     dV_phi = -scf_alpha*scf_V_1*exp(-scf_alpha*phi)-scf_beta*scf_V_2*exp(-scf_beta*phi);
+  break;
+  case EXP:
+    dV_phi = -scf_beta*scf_V_2*exp(-scf_beta*phi);
   break;
   }
   return dV_phi;
@@ -3016,6 +3041,9 @@ double ddV_scf(struct background *pba,
   break;
   case EXPEXP:
     ddV_phi = pow(-scf_alpha,2)*scf_V_1*exp(-scf_alpha*phi)+pow(-scf_beta,2)*scf_V_2*exp(-scf_beta*phi);
+  break;
+  case EXP:
+    ddV_phi = pow(-scf_beta,2)*scf_V_2*exp(-scf_beta*phi);
   break;
   }
   return ddV_phi;
