@@ -12,7 +12,7 @@ class_precision_parameter(a_ini_over_a_today_default,double,1.e-14)
 /**
  * Number of background integration steps that are stored in the output vector
  */
-class_precision_parameter(background_Nloga,int,3000)
+class_precision_parameter(background_Nloga,int,40000)
 /**
  * Evolver to be used for thermodynamics (rk, ndf15)
  */
@@ -89,6 +89,10 @@ class_precision_parameter(tol_shooting_deltaF,double,1.e-6)
  */
 class_precision_parameter(tol_shooting_deltax_rel,double,1.e-5)
 /**
+ * Tolerance on input of various fractions (e.g. f_idm)
+ */
+class_precision_parameter(tol_fraction_accuracy,double,1.e-10)
+/**
  * Threshold value of M_ncdm=T_ncdm/m_ncdm above wich a species is
  * considered a "non-free-streaming" when comuting the parameter
  * Omega0_nfsm, relevant for HyRec and non-linear correction
@@ -111,10 +115,15 @@ class_string_parameter(sBBN_file,"/external/bbn/sBBN_2017.dat","sBBN file")
  */
 
 /**
- * The initial z for the recfast calculation of the recombination history
+ * The initial z for the calculation of the recombination history
  */
 class_precision_parameter(thermo_z_initial,double,5.e6)
-class_precision_parameter(thermo_z_initial_if_idm_dr,double,1.e9)
+/**
+ * The initial z for the calculation of the recombination history in
+ * presence of idm (unless the later is tightly-coupled at this
+ * redshift)
+ */
+class_precision_parameter(thermo_z_initial_if_idm,double,1.e9)
 /**
  * The switch z for the recfast calculation towards linear sampling
  */
@@ -127,7 +136,6 @@ class_precision_parameter(thermo_Nz_lin,int,20000)
  * Number of recfast integration steps (logarithmnic sampling. early times between z-initial and z_linear)
  */
 class_precision_parameter(thermo_Nz_log,int,5000)
-class_precision_parameter(thermo_Nz_log_if_idm_dr,int,10000)
 /**
  * Evolver to be used for thermodynamics (rk, ndf15)
  */
@@ -239,7 +247,7 @@ class_precision_parameter(z_start_chi_approx,double,2.0e3) /**< Switching redshi
 
 class_precision_parameter(k_min_tau0,double,0.1) /**< number defining k_min for the computation of Cl's and P(k)'s (dimensionless): (k_min tau_0), usually chosen much smaller than one */
 
-class_precision_parameter(k_max_tau0_over_l_max,double,2.4) /**< number defining k_max for the computation of Cl's (dimensionless): (k_max tau_0)/l_max, usually chosen around two */
+class_precision_parameter(k_max_tau0_over_l_max,double,1.8) /**< number defining k_max for the computation of Cl's (dimensionless): (k_max tau_0)/l_max, usually chosen around two. In v3.2.2: lowered from 2.4 to 1.8, because the high value 2.4 was needed to keep CMB lensing accurate enough. With the new Limber scheme, this will be the case anyway, and k_max can be lowered in other observables in order to speed up the code. */
 class_precision_parameter(k_step_sub,double,0.05) /**< step in k space, in units of one period of acoustic oscillation at decoupling, for scales inside sound horizon at decoupling */
 class_precision_parameter(k_step_super,double,0.002) /**< step in k space, in units of one period of acoustic oscillation at decoupling, for scales above sound horizon at decoupling */
 class_precision_parameter(k_step_transition,double,0.2) /**< dimensionless number regulating the transition from 'sub' steps to 'super' steps. Decrease for more precision. */
@@ -277,6 +285,18 @@ class_precision_parameter(tight_coupling_trigger_tau_c_over_tau_h,double,0.015)
  */
 class_precision_parameter(tight_coupling_trigger_tau_c_over_tau_k,double,0.01)
 
+/**
+ * when to switch off tight-coupling approximation:
+ * third condition: for the case of idm with photons.
+ */
+class_precision_parameter(tight_coupling_trigger_tau_c_over_tau_dmu_idm_g, double, 0.01);
+
+/**
+ * when to switch off tight-coupling approximation:
+ * fourth condition: for the case of idm with baryons.
+ */
+class_precision_parameter(tight_coupling_trigger_tau_c_over_tau_R_idm_b, double, 0.01)
+
 class_precision_parameter(start_sources_at_tau_c_over_tau_h,double,0.008) /**< sources start being sampled when universe is sufficiently opaque. This is quantified in terms of the ratio of thermo to hubble time scales, \f$ \tau_c/\tau_H \f$. Start when start_sources_at_tau_c_over_tau_h equals this ratio. Decrease this value to start sampling the sources earlier in time. */
 
 class_precision_parameter(tight_coupling_approximation,int,(int)compromise_CLASS) /**< method for tight coupling approximation */
@@ -305,6 +325,15 @@ class_precision_parameter(perturbations_integration_stepsize,double,0.5)
  * default step \f$ d \tau \f$ for sampling the source function, in units of the timescale involved in the sources: \f$ (\dot{\kappa}- \ddot{\kappa}/\dot{\kappa})^{-1} \f$
  */
 class_precision_parameter(perturbations_sampling_stepsize,double,0.1)
+/**
+ * added in v 3.2.2: age fraction (between 0 and 1 ) such that, when
+ * tau > conformal_age * age_fraction, the time sampling of sources is
+ * twice finer, in order to boost the accuracy of the lensing
+ * line-of-sight integrals (for l < l_switch_limber) without changing
+ * that of unlensed CMB observables. Setting to 1.0 disables this
+ * functionality.
+*/
+class_precision_parameter(perturbations_sampling_boost_above_age_fraction, double, 0.9)
 /**
  * control parameter for the precision of the perturbation integration,
  * IMPORTANT FOR SETTING THE STEPSIZE OF NDF15
@@ -441,6 +470,9 @@ class_precision_parameter(q_numstep_transition,double,250.0) /**< number of step
                                  q_logstep_spline steps (transition
                                  must be smooth for spline) */
 
+class_precision_parameter(q_logstep_limber,double,1.025) /**< new in v3.2.2: in the new 'full limber' scheme, logarithmic step for the k-grid (and q-grid) */
+class_precision_parameter(k_max_limber_over_l_max_scalars,double,0.001) /**< new in v3.2.2: in the new 'full limber' scheme, the integral runs up to k_max = l_max_scalars times this parameter (units of 1/Mpc) */
+
 class_precision_parameter(transfer_neglect_delta_k_S_t0,double,0.15) /**< for temperature source function T0 of scalar mode, range of k values (in 1/Mpc) taken into account in transfer function: for l < (k-delta_k)*tau0, ie for k > (l/tau0 + delta_k), the transfer function is set to zero */
 class_precision_parameter(transfer_neglect_delta_k_S_t1,double,0.04) /**< same for temperature source function T1 of scalar mode */
 class_precision_parameter(transfer_neglect_delta_k_S_t2,double,0.15) /**< same for temperature source function T2 of scalar mode */
@@ -475,7 +507,7 @@ class_precision_parameter(selection_sampling_bessel_los,double,ppr->selection_sa
 class_precision_parameter(selection_tophat_edge,double,0.1) /**< controls how smooth are the edge of top-hat window function (<<1 for very sharp, 0.1 for sharp) */
 
 /*
- * Nonlinear module precision parameters
+ * Fourier module precision parameters
  * */
 
 class_precision_parameter(sigma_k_per_decade,double,80.) /**< logarithmic stepsize controlling the precision of integrals for sigma(R,k) and similar quantitites */
@@ -489,6 +521,9 @@ class_precision_parameter(nonlinear_min_k_max,double,5.0) /**< when
                                is still controlled by P_k_max_1/Mpc or
                                P_k_max_h/Mpc even if they are
                                smaller */
+
+class_precision_parameter(k_max_for_pk_sigma8_min,double,10.) /**< minimal k_max for computation of sigma8 */
+class_precision_parameter(k_max_for_pk_sigma8_max,double,100.) /**< maximal k_max for computation of sigma8 */
 
 /** parameters relevant for HALOFIT computation */
 
