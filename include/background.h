@@ -118,10 +118,11 @@ struct background
   double wa_fld;   /**< \f$ wa_{DE} \f$: fluid equation of state parameter derivative */
   double cs2_fld;  /**< \f$ c^2_{s~DE} \f$: sound speed of the fluid in the frame comoving with the fluid (so, this is
                       not [delta p/delta rho] in the synchronous or newtonian gauge!) */
+  short use_pixelated_for_wa; /**< switch to use pixlated DE equation wa = -3/2 Omega0_m (1+w0) */ //OR added
   double Omega_EDE;        /**< \f$ wa_{DE} \f$: Early Dark Energy density parameter */
   double * scf_parameters; /**< list of parameters describing the scalar field potential */
   short attractor_ic_scf;  /**< whether the scalar field has attractor initial conditions */
-  short phiprime_ic_scf;  /**< whether phi_prime_ini scalar field has attractor initial conditions */ //OR
+  short phiprime_ic_scf;  /**< whether phi_prime_ini scalar field has attractor initial conditions */ //OR added
   int scf_tuning_index;    /**< index in scf_parameters used for tuning */
   double phi_ini_scf;      /**< \f$ \phi(t_0) \f$: scalar field initial value */
   double phi_prime_ini_scf;/**< \f$ d\phi(t_0)/d\tau \f$: scalar field initial derivative wrt conformal time */
@@ -158,7 +159,7 @@ struct background
   double Omega0_nfsm; /**< total non-free-streaming matter, that is, cdm, baryons and wdm */
   double a_eq;      /**< scale factor at radiation/matter equality */
   double H_eq;      /**< Hubble rate at radiation/matter equality [Mpc^-1] */
-  double H_ini;     /**< Hubble rate at the initial time [Mpc^-1] */ //OR
+  double H_ini;     /**< Hubble rate at the initial time [Mpc^-1] */ //OR added
   double z_eq;      /**< redshift at radiation/matter equality */
   double tau_eq;    /**< conformal time at radiation/matter equality [Mpc] */
 

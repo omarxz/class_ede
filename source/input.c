@@ -3318,8 +3318,21 @@ int input_read_parameters_species(struct file_content * pfc,
       /** 8.a.2.2) Equation of state of the fluid in 'CLP' case */
       /* Read */
       class_read_double("w0_fld",pba->w0_fld);
-      class_read_double("wa_fld",pba->wa_fld);
+      /* class_read_double("wa_fld",pba->wa_fld); */ //OR added
       class_read_double("cs2_fld",pba->cs2_fld);
+
+      class_call(parser_read_string(pfc,"use_pixelated_for_wa",&string1,&flag1,errmsg), //OR added
+               errmsg,
+               errmsg);
+      if (flag1 == _TRUE_){ //OR added
+        if (string_begins_with(string1,'y') || string_begins_with(string1,'Y')) {
+          pba->wa_fld = - 3./2 * (pba->Omega0_b + pba->Omega0_cdm +  pba->Omega0_ncdm_tot) * (1. + pba->w0_fld);
+          if (input_verbose > 0) printf("Calculated wa_fld = -3/2 Omega_m (1+w0_fld) =  %g\n", pba->wa_fld);
+        }
+      }
+      else {
+        class_read_double("wa_fld",pba->wa_fld);
+      }
     }
     if (pba->fluid_equation_of_state == EDE) {
       /** 8.a.2.3) Equation of state of the fluid in 'EDE' case */
